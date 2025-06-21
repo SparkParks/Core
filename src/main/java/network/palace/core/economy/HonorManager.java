@@ -10,17 +10,64 @@ import org.bukkit.Sound;
 import java.util.*;
 
 /**
- * @author Innectic
- * @since 6/6/2017
+ * Manages the honor transactions and mappings for players. This class handles
+ * synchronization of transactions, mapping honor levels to players, and
+ * tracking progress to the next honor level. It also provides functionality
+ * to display honor levels to players.
  */
 public class HonorManager {
+    /**
+     * A map that tracks transactions associated with players.
+     * The key represents the unique identifier (UUID) of a player,
+     * and the value is the corresponding {@link Transaction}
+     * containing all details related to the transaction.
+     * <p>
+     * This map is used internally by the {@code HonorManager}
+     * to manage and process player transactions efficiently.
+     * <p>
+     * It utilizes a {@link HashMap} for fast retrieval and storage of transaction data.
+     */
     private final Map<UUID, Transaction> transactions = new HashMap<>();
+
+    /**
+     * A set of mappings used to map honor levels to specific honor values.
+     * This field represents the collection of {@link HonorMapping} objects
+     * managed by the {@code HonorManager} class.
+     */
     private final Set<HonorMapping> mappings = new HashSet<>();
+
+    /**
+     * A sorted set that holds the honor level mappings in ascending order.
+     * This field is used to store honor thresholds or levels, which can
+     * be utilized for determining a player's current level or progression.
+     * The use of a TreeSet ensures the mappings are always stored
+     * in sorted order, facilitating efficient range queries and level calculation.
+     */
     private final TreeSet<Integer> honorMappings = new TreeSet<>();
+
+    /**
+     * Represents the highest honor level recorded in the system.
+     * This variable is used to track the maximum honor level and
+     * may be updated during the lifecycle of the HonorManager as new levels are introduced or calculated.
+     */
     private int highest = 0;
 
     /**
-     * Instantiates a new Honor manager.
+     * Constructor for the HonorManager class.
+     * <p>
+     * This constructor initializes a task that runs periodically to process
+     * transactions for honor updates. Transactions are processed in smaller
+     * batches to ensure efficient handling and to avoid overloading the system.
+     * <p>
+     * The process is divided into the following steps:
+     * 1. Retrieve a subset of transactions from the main transactions map.
+     * 2. Remove the retrieved transactions from the main map.
+     * 3. Process each transaction asynchronously, ensuring database updates
+     *    are made to reflect changes in honor levels.
+     * <p>
+     * Error handling mechanisms are in place to catch exceptions during the
+     * transaction processing and to notify the corresponding callbacks if
+     * transactions fail.
      */
     public HonorManager() {
         Core.runTaskTimer(() -> {
@@ -63,6 +110,14 @@ public class HonorManager {
         }, 0L, 20L);
     }
 
+    /**
+     * Retrieves a subset of a given map, containing a specified maximum number of entries.
+     * If the map's size is less than or equal to the requested amount, the entire map is returned.
+     *
+     * @param map    the original map from which a subset is to be extracted
+     * @param amount the maximum number of entries to include in the resulting map
+     * @return a new map containing up to the specified number of entries from the original map
+     */
     private Map<UUID, Transaction> getPartOfMap(Map<UUID, Transaction> map, int amount) {
         if (map.size() <= amount) return new HashMap<>(map);
         Map<UUID, Transaction> mapPart = new HashMap<>();
@@ -76,13 +131,13 @@ public class HonorManager {
     }
 
     /**
-     * Add a transaction to the queue
+     * Adds a transaction to the system for processing. A new transaction is created
+     * with the given parameters and stored in the internal transaction map.
      *
-     * @param uuid     the uuid of the target of the transaction
-     * @param amount   the amount of the transaction
-     * @param source   the source of the transaction
-     * @param callback the callback to be executed after the transaction completes
-     * @implNote Do NOT call this method directly, use methods in {{@link network.palace.core.player.CPlayer}}
+     * @param uuid      the unique identifier of the player making the transaction
+     * @param amount    the amount associated with the transaction
+     * @param source    the source or description of the transaction
+     * @param callback  the callback to handle the result of the transaction processing
      */
     public void addTransaction(UUID uuid, int amount, String source, TransactionCallback callback) {
         Transaction transaction = new Transaction(uuid, null, amount, source, callback);
@@ -90,9 +145,11 @@ public class HonorManager {
     }
 
     /**
-     * Provide mappings to the manager
+     * Updates the current honor mappings with the provided list of mappings.
+     * Clears any existing mappings and recalculates the highest level and
+     * honor mappings. Also updates honor for all online players.
      *
-     * @param mappings the mappings that should be used
+     * @param mappings a list of HonorMapping objects representing the updated honor mappings
      */
     public void provideMappings(List<HonorMapping> mappings) {
         this.mappings.clear();
@@ -113,10 +170,11 @@ public class HonorManager {
     }
 
     /**
-     * Get the honor level for a player
+     * Retrieves the honor mapping for a given player based on their current honor.
+     * This method calculates the player's level and experience points (XP) relative to their honor.
      *
-     * @param player the player to get the map for
-     * @return the mapper for the player
+     * @param player the player whose honor mapping is to be determined
+     * @return an HonorMapping object containing the player's level and XP
      */
     public HonorMapping getMapped(CPlayer player) {
         if (player.getHonor() == 0) {
@@ -133,10 +191,12 @@ public class HonorManager {
     }
 
     /**
-     * Get level from honor
+     * Retrieves the honor mapping corresponding to a specific honor value.
+     * Determines the level and honor mapping for the given honor amount.
      *
-     * @param honor amount of honor
-     * @return level mapping
+     * @param honor the honor value for which the corresponding level and mapping are to be determined
+     * @return an HonorMapping object representing the level and honor for the given input; defaults to level 1
+     *         and honor 0 if no specific mapping exists
      */
     public HonorMapping getLevel(int honor) {
         if (honor == 0) {
@@ -149,10 +209,12 @@ public class HonorManager {
     }
 
     /**
-     * Get next level from honor amount
+     * Determines the next honor level and its associated honor requirement for a given honor value.
+     * This method calculates the next level based on the provided honor amount.
+     * If no next level exists, it defaults to level 1 and honor 0.
      *
-     * @param honor amount of honor
-     * @return mapping of next level
+     * @param honor the current honor value for which the next level is to be determined
+     * @return an HonorMapping object representing the next level and honor requirement
      */
     public HonorMapping getNextLevel(int honor) {
         if (honor == 0) {
@@ -174,10 +236,13 @@ public class HonorManager {
     }
 
     /**
-     * Get progress to next level
+     * Calculates the player's progress towards the next honor level based on their current honor value.
+     * This is determined by the relative position of the player's honor within the range defined
+     * by their current level's honor requirement and the next level's honor requirement.
      *
-     * @param honor amount of honor
-     * @return percentage complete from current level to next level as a float
+     * @param honor the current honor value of the player
+     * @return a float representing the player's progress to the next level, where 0.0f indicates no progress
+     *         and 1.0f indicates that the next level is fully reached
      */
     public float progressToNextLevel(int honor) {
         if (honor == 0) {
@@ -204,20 +269,24 @@ public class HonorManager {
     }
 
     /**
-     * Display the player's honor level to them
+     * Displays the honor level and progress of the given player.
+     * This method invokes an internal implementation to handle the display,
+     * considering default behavior.
      *
-     * @param player the player to display to
+     * @param player the player whose honor level and progress are being displayed
      */
     public void displayHonor(CPlayer player) {
         displayHonor(player, false);
     }
 
     /**
-     * Display the player's honor level to them
+     * Displays the honor level and progress of the given player.
+     * Updates the player's level and experience based on the honor mappings.
+     * Handles level changes and provides appropriate feedback to the player.
      *
-     * @param player the player to display to
-     * @param first  whether or not this is the first set
-     * @implNote Do NOT use this method outside of the player join task!
+     * @param player the player whose honor level and progress are being displayed
+     * @param first  a flag indicating whether this is the first time the honor is being displayed,
+     *               affecting how level changes are processed
      */
     public void displayHonor(CPlayer player, boolean first) {
         HonorMapping mapping = getMapped(player);
@@ -249,6 +318,13 @@ public class HonorManager {
         Core.getCraftingMenu().update(player, 1, Core.getCraftingMenu().getPlayerHead(player));
     }
 
+    /**
+     * Determines the color associated with the given level.
+     * The color corresponds to predefined ranges for level thresholds.
+     *
+     * @param level the player's level used to determine the corresponding color
+     * @return the ChatColor associated with the given level
+     */
     private ChatColor getColorFromLevel(int level) {
         if (level < 10) {
             return ChatColor.GREEN;
@@ -274,15 +350,22 @@ public class HonorManager {
     }
 
     /**
-     * Get the mapped honor for a player
+     * Retrieves the honor mapping corresponding to the specified honor value.
+     * Searches through the existing mappings to find a match and returns it if found.
      *
-     * @param honor the player's honor
-     * @return the mapping
+     * @param honor the honor value to search for in the honor mappings
+     * @return an {@code Optional} containing the corresponding {@code HonorMapping} if a match exists,
+     *         or an empty {@code Optional} if no match is found
      */
     private Optional<HonorMapping> getMapped(int honor) {
         return mappings.stream().filter(mapping -> mapping.getHonor() == honor).findFirst();
     }
 
+    /**
+     * Retrieves the highest honor level from the current configuration.
+     *
+     * @return the highest honor level as an integer
+     */
     public int getTopLevel() {
         return highest;
     }

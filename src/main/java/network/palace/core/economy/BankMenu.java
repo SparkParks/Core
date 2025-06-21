@@ -16,13 +16,43 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The BankMenu class represents a banking menu interface for players, allowing them
+ * to view balances, access banking utilities, and perform trading actions.
+ * This class provides methods to open and interact with various banking-related menus.
+ */
 public class BankMenu {
+    /**
+     * Represents the player interacting with the bank menu.
+     * It is a reference to the {@code CPlayer} instance associated with the menu operations.
+     * This is a final field, meaning its reference cannot be reassigned after initialization.
+     */
     private final CPlayer player;
 
+    /**
+     * Constructs a new BankMenu for the specified player.
+     *
+     * @param player the player object for whom the bank menu is being created
+     */
     public BankMenu(CPlayer player) {
         this.player = player;
     }
 
+    /**
+     * Opens the "Bank Menu" for the associated player. This menu allows the player to access
+     * various banking-related functionalities such as viewing balances and managing utilities.
+     * <p>
+     * The menu contains the following interactive buttons:
+     * - A "View your balances" button: Allows the player to view their account balances
+     *   (opens the balances menu when clicked).
+     * - A "Banking Utilities" button: Provides access to additional banking options like
+     *   trading, recent spending, and leaderboards (opens the utilities menu when clicked).
+     * <p>
+     * Each button is configured to respond to specific actions, such as a left-click by
+     * the player.
+     * <p>
+     * The menu is configured with a fixed size of 27 slots and is titled "Bank Menu".
+     */
     public void openMenu() {
         List<MenuButton> buttons = new ArrayList<>();
         ItemStack balanceButton = new ItemStack(Material.CLAY_BRICK);
@@ -54,6 +84,20 @@ public class BankMenu {
         inv.open();
     }
 
+    /**
+     * Opens the "Bank Balances" menu for the specified player. This menu displays
+     * the player's current balance of Adventure Coins and allows the player to
+     * navigate back to the previous menu.
+     * <p>
+     * The menu contains the following buttons:
+     * - Adventure Coins: Displays the player's current Adventure Coins balance
+     *   along with relevant information about this currency.
+     * - Go Back: Allows the player to return to the previous menu.
+     * <p>
+     * The menu is configured with a fixed size of 27 slots and is titled "Bank Balances".
+     *
+     * @param p the player for whom the "Bank Balances" menu is being opened
+     */
     private void openBalance(CPlayer p) {
         List<MenuButton> buttons = new ArrayList<>();
         ItemStack adventureCoins = new ItemStack(Material.GOLD_INGOT);
@@ -82,6 +126,24 @@ public class BankMenu {
         inv.open();
     }
 
+    /**
+     * Opens the "Utilities Menu" for the associated player. This menu provides several interactive
+     * options for managing banking utilities, such as trading, transactions, leaderboards, and
+     * navigating back to the main menu.
+     * <p>
+     * The menu contains the following items:
+     * - Trading Menu: Opens the trading interface where players can trade with others.
+     * - Transactions Menu: Placeholder for a functionality to view or manage recent transactions.
+     * - Leaderboards Menu: Placeholder for a functionality to view player leaderboards.
+     * - Go Back: Returns the player to the main "Bank Menu".
+     * <p>
+     * Each menu item is represented as a button configured with its own display name, and actions
+     * are triggered using left-click events. For example:
+     * - The "Trading Menu" button triggers the opening of the trading menu.
+     * - The "Go Back" button closes the current menu and navigates to the main menu.
+     * <p>
+     * The menu is configured with a fixed size of 27 slots and is titled "Bank Utilities".
+     */
     private void openUtilsMenu() {
         List<MenuButton> buttons = new ArrayList<>();
 
@@ -129,6 +191,14 @@ public class BankMenu {
         inv.open();
     }
 
+    /**
+     * Opens the trading menu for the associated player at the specified page.
+     * This menu displays a list of online players, allowing the player to
+     * initiate trading requests with them. Navigation buttons for paging through
+     * the list and exiting the menu are also included.
+     *
+     * @param page the current page index to display in the trading menu
+     */
     private void openTrading(int page) {
         List<MenuButton> buttons = new ArrayList<>();
         int players = Core.getPlayerManager().getPlayerCount();
@@ -189,6 +259,14 @@ public class BankMenu {
         inv.open();
     }
 
+    /**
+     * Sends a trade request from the current player to the specified recipient player.
+     * If the recipient is the sender or another condition prevents the trade
+     * request, an appropriate feedback message is sent to the sender.
+     * The recipient is notified of the trade request with instructions on how to respond.
+     *
+     * @param receiver the player to whom the trade request is being sent
+     */
     private void sendPlayerTradeRequest(CPlayer receiver) {
         if (receiver.equals(player)) {
             player.sendMessage(ChatColor.RED + "You cannot trade with yourself!");

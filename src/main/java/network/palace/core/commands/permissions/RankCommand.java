@@ -16,23 +16,61 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents a command that manages rank-based permissions and information.
+ * This command allows for operations such as getting, setting, unsetting,
+ * testing permissions for a given rank, and listing members of a rank.
+ * It is designed to be accessed by both players and console command senders.
+ */
 @CommandMeta(description = "Rank commands")
 public class RankCommand extends CoreCommand {
 
+    /**
+     * Constructs a new RankCommand instance.
+     * This command is used to manage or display rank-related information within the application.
+     * <p>
+     * The command inherits its primary name, "rank", from the CoreCommand superclass.
+     */
     public RankCommand() {
         super("rank");
     }
 
+    /**
+     * Handles the execution of the "rank" command when invoked by a player.
+     * This method processes the command input provided by the player and delegates
+     * the handling to another method for further processing.
+     *
+     * @param player the CPlayer object representing the player who executed the command
+     * @param args the arguments provided by the player with the command
+     * @throws CommandException if an error occurs during command execution
+     */
     @Override
     protected void handleCommand(CPlayer player, String[] args) throws CommandException {
         handle(player.getBukkitPlayer(), args);
     }
 
+    /**
+     * Handles the execution of a command initiated by the console.
+     * This method delegates the command processing to the {@link #handle} method.
+     *
+     * @param commandSender the ConsoleCommandSender instance representing the sender of the command
+     * @param args the arguments provided with the command
+     * @throws CommandException if an error occurs during the command execution
+     */
     @Override
     protected void handleCommand(ConsoleCommandSender commandSender, String[] args) throws CommandException {
         handle(commandSender, args);
     }
 
+    /**
+     * Handles the execution of the rank command for a given sender.
+     * Processes various subcommands such as "get", "set", "unset", "test", and "members"
+     * to manage or retrieve rank-related permissions and information.
+     *
+     * @param sender the sender who executed the command, either a player or console
+     * @param args the command arguments provided by the sender
+     * @throws CommandException if an error occurs during command execution
+     */
     protected void handle(CommandSender sender, String[] args) throws CommandException {
         if (args.length < 2) {
             helpMenu(sender);
@@ -137,6 +175,13 @@ public class RankCommand extends CoreCommand {
         helpMenu(sender);
     }
 
+    /**
+     * Displays the help menu for the rank-related permissions commands.
+     * This method provides a detailed list of available subcommands
+     * with brief descriptions to guide the user on their usage.
+     *
+     * @param sender the sender who executed the command, can be a player or console
+     */
     private void helpMenu(CommandSender sender) {
         sender.sendMessage(ChatColor.GREEN + "/perm rank [rank] get [permission] " + ChatColor.AQUA + "- Get the value of a permission for a rank");
         sender.sendMessage(ChatColor.GREEN + "/perm rank [rank] set [permission] <true/false> " + ChatColor.AQUA + "- Set the value of a permission for a rank");

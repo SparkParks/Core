@@ -24,23 +24,63 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a command used for managing player permissions, ranks, and tags.
+ * This command supports various operations on players, such as retrieving or modifying
+ * their permissions, ranks, and tags. It can be executed by players or the console.
+ */
 @CommandMeta(description = "Player commands")
 public class PlayerCommand extends CoreCommand {
 
+    /**
+     * Constructs a new instance of the PlayerCommand.
+     * This command is used to handle various player-related operations in the application.
+     * The specific functionality of the command is determined by the arguments provided during execution.
+     * <p>
+     * The command is named "player" and extends the functionality provided by the
+     * {@link CoreCommand} class.
+     */
     public PlayerCommand() {
         super("player");
     }
 
+    /**
+     * Handles a command executed by a player.
+     * This method processes the command arguments and delegates their
+     * handling to a general-purpose command handler.
+     *
+     * @param player The CPlayer instance representing the player executing the command.
+     * @param args   The arguments passed with the command.
+     * @throws CommandException If an error occurs while processing the command.
+     */
     @Override
     protected void handleCommand(CPlayer player, String[] args) throws CommandException {
         handle(player.getBukkitPlayer(), args);
     }
 
+    /**
+     * Handles a command executed from the console.
+     * This method delegates the command execution to a general-purpose handler for further processing.
+     *
+     * @param commandSender The sender of the command, specifically a console command sender.
+     * @param args The arguments passed with the command.
+     * @throws CommandException If an error occurs during command processing.
+     */
     @Override
     protected void handleCommand(ConsoleCommandSender commandSender, String[] args) throws CommandException {
         handle(commandSender, args);
     }
 
+    /**
+     * Handles a player-related command from a given sender.
+     * This method interprets the command arguments and performs actions such as retrieving
+     * player rank, managing tags, or updating ranks, depending on the command type and arguments provided.
+     *
+     * @param sender The source of the command, which can be a player or a console.
+     * @param args   The command arguments, where the first argument specifies the player name and
+     *               second argument determines the operation (e.g., "get", "rank", "tags", "setrank", "addtag", "removetag").
+     * @throws CommandException If an error occurs while processing the command.
+     */
     protected void handle(CommandSender sender, String[] args) throws CommandException {
         if (args.length < 2) {
             helpMenu(sender);
@@ -218,6 +258,14 @@ public class PlayerCommand extends CoreCommand {
         helpMenu(sender);
     }
 
+    /**
+     * Displays the help menu with a list of available player permission-related commands.
+     * This helps the user understand the available operations they can perform with the
+     * /perm player command.
+     *
+     * @param sender The sender of the command, which can be a player or console, who will
+     *               receive the help menu message.
+     */
     private void helpMenu(CommandSender sender) {
         sender.sendMessage(ChatColor.GREEN + "/perm player [player] get [permission] " + ChatColor.AQUA + "- Get the value of a permission for a player");
         sender.sendMessage(ChatColor.GREEN + "/perm player [player] rank " + ChatColor.AQUA + "- Get the player's rank.");

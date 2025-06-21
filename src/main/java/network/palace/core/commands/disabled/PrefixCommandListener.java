@@ -16,10 +16,43 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The {@code PrefixCommandListener} class implements the {@link Listener} interface and provides
+ * functionalities to handle command preprocessing and tab completion events in a Minecraft server.
+ * <p>
+ * This class restricts players below a certain rank from using specific commands based on their
+ * prefixes (e.g., "/minecraft:", "/bukkit:") or custom blocked completions. It processes player
+ * commands and filter results provided in tab completions.
+ * <p>
+ * Events handled by this listener include:
+ * 1. {@link PlayerCommandPreprocessEvent}: This event is used to intercept and conditionally cancel
+ *    commands based on the player's rank and specified command prefixes.
+ * 2. {@link TabCompleteEvent}: This event is used to filter and control the command suggestions
+ *    displayed to players, blocking access to commands with blocked prefixes or plugins.
+ * <p>
+ * Commands and completions starting with specific prefixes or meant for blocked plugins are
+ * disabled for players with a rank lower than a predefined level.
+ */
 public class PrefixCommandListener implements Listener {
+    /**
+     * A static list of string prefixes representing command completions that are blocked.
+     * <p>
+     * The `blockedCompletions` variable contains a set of strings, each representing the
+     * prefixes of commands that are restricted or disabled from being used or suggested
+     * within the application. This is typically used to prevent players from executing certain
+     * commands or accessing specific functionality by filtering command inputs or suggestions.
+     * <p>
+     * Example prefixes include commonly restricted namespaces or tools like "/minecraft:" and "//".
+     */
     private static List<String> blockedCompletions = new ArrayList<>(Arrays.asList("/minecraft:", "/bukkit:", "/worldedit",
             "/ncp", "/nocheatplus", "//"));
 
+    /**
+     * Handles the {@link PlayerCommandPreprocessEvent} to intercept and restrict the use of certain commands
+     * based on the player's rank.
+     *
+     * @param event the {@link PlayerCommandPreprocessEvent} triggered when a player attempts to execute a command
+     */
     @EventHandler
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         if (event.getMessage().startsWith("/minecraft:") || event.getMessage().startsWith("/bukkit:")) {
@@ -31,6 +64,12 @@ public class PrefixCommandListener implements Listener {
         }
     }
 
+    /**
+     * Handles the {@link TabCompleteEvent} to filter and modify tab completion suggestions
+     * based on the player's rank and blocked entries.
+     *
+     * @param event the {@link TabCompleteEvent} triggered when a player attempts to use tab completion
+     */
     @EventHandler
     public void onTabComplete(TabCompleteEvent event) {
         List<String> newCompletions = new ArrayList<>();

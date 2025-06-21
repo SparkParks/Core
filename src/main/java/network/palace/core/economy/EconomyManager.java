@@ -9,11 +9,43 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * The EconomyManager class is responsible for managing and processing
+ * financial transactions for players. It handles the queuing, validation,
+ * and asynchronous processing of these transactions, and interacts with
+ * the database to update account balances.
+ * <p>
+ * Transactions are processed in batches at regular intervals, with a limit
+ * on the number of transactions handled per task execution. Callbacks are
+ * used to notify the source of a transaction's success or failure.
+ */
 public class EconomyManager {
+    /**
+     * Represents a map that stores transactions associated with unique identifiers (UUIDs).
+     * Each entry in the map contains a UUID as the key, representing the unique player or
+     * transaction identifier, and a {@link Transaction} object as the value, containing
+     * detailed information about the transaction.
+     * <p>
+     * This map is used to manage and track economic transactions, linking the details of
+     * each transaction to a specific UUID. The map is immutable after initialization due
+     * to its designation as a {@code final} field, ensuring the reference to the map cannot
+     * be reassigned.
+     */
     private final Map<UUID, Transaction> transactions = new HashMap<>();
 
     /**
-     * Instantiates a new Economy manager.
+     * Constructor for EconomyManager. Initializes and schedules a repeating task that processes
+     * queued transactions in batches for efficient handling.
+     * <p>
+     * The constructor sets up a timer task that:
+     * - Processes up to a limited number of transactions per iteration.
+     * - Removes transactions from the main transaction queue and processes them asynchronously.
+     * - Handles any database operations necessary to update the state of individual transactions.
+     * - Notifies the corresponding callback of each transaction regarding its success or failure.
+     * <p>
+     * Database operations and transaction handling are performed asynchronously to prevent
+     * blocking the main server thread. Failed transactions are logged, and callbacks are notified
+     * accordingly.
      */
     public EconomyManager() {
         Core.runTaskTimer(() -> {
@@ -56,6 +88,13 @@ public class EconomyManager {
         }, 0L, 20L);
     }
 
+    /**
+     * Retrieves a subset of the given map containing at most the specified number of entries.
+     *
+     * @param map the original map from which a subset will be extracted
+     * @param amount the maximum number of entries to include in the resulting map
+     * @return a new map containing up to the specified number of entries from the original map
+     */
     private Map<UUID, Transaction> getPartOfMap(Map<UUID, Transaction> map, int amount) {
         if (map.size() <= amount) return new HashMap<>(map);
         Map<UUID, Transaction> mapPart = new HashMap<>();
@@ -69,14 +108,13 @@ public class EconomyManager {
     }
 
     /**
-     * Add a transaction to the queue
+     * Adds a new transaction to the transaction queue for processing.
      *
-     * @param uuid     the uuid of the target of the transaction
-     * @param amount   the amount of the transaction
-     * @param source   the source of the transaction
-     * @param type     the type of currency for the transaction
-     * @param callback the callback to be executed after the transaction completes
-     * @implNote Do NOT call this method directly, use methods in {{@link network.palace.core.player.CPlayer}}
+     * @param uuid     the unique identifier of the player associated with this transaction
+     * @param amount   the amount of currency involved in the transaction
+     * @param source   the source or reason for the transaction
+     * @param type     the type of currency being transacted, defined by the {@link CurrencyType} enum
+     * @param callback the callback to be executed upon completion of the transaction, indicating success or failure
      */
     public void addTransaction(UUID uuid, int amount, String source, CurrencyType type, TransactionCallback callback) {
         Transaction transaction = new Transaction(uuid, type, amount, source, callback);
