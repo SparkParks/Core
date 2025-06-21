@@ -18,19 +18,49 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 /**
- * The type Balance command.
+ * The BalanceCommand class handles economy-related commands for managing player
+ * balances. The command supports actions such as querying, setting, adding, or
+ * subtracting currency from a player's balance.
+ * <p>
+ * This command is designed for use by players, console, or block command senders.
+ * It includes validation checks for input arguments and handles asynchronous
+ * database interaction to retrieve or update player currency balances.
+ * <p>
+ * The command provides the following functionalities:
+ * - Querying the balance of the command sender.
+ * - Querying the balance of another player by username.
+ * - Modifying the balance of a player using actions (set, add, minus) by amount.
+ * <p>
+ * This command is marked as deprecated and may be removed or replaced in future updates.
+ * It is recommended to avoid using this command in new development.
  */
 @Deprecated
 @CommandMeta(aliases = "bal", description = "Manage economy balances", rank = Rank.CM)
 public class BalanceCommand extends CoreCommand {
 
     /**
-     * Instantiates a new Balance command.
+     * Constructs a new BalanceCommand instance.
+     * This command is used to handle balance-related actions for players within the system.
      */
     public BalanceCommand() {
         super("balance");
     }
 
+    /**
+     * Handles various balance-related actions for a command sender, which can be a player, console,
+     * or command block. Based on the provided arguments, the method determines the appropriate action to take,
+     * such as retrieving a player's balance, modifying balances, or showing a help menu.
+     *
+     * @param sender The command sender executing the command. This can be a {@code Player},
+     *               {@code ConsoleCommandSender}, or {@code BlockCommandSender}.
+     * @param args   The arguments passed along with the command. These determine the specific action:
+     *               - No arguments: Display balance for the sender if they are a player, or show help menu otherwise.
+     *               - One argument: Retrieve the balance of the specified player.
+     *               - Two arguments: Perform a balance-related action affecting the sender.
+     *               - Three arguments: Perform a balance-related action affecting another player, providing an action
+     *                 type, amount, and identifying source of the request.
+     * @throws CommandException If there is an error executing or processing the command.
+     */
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         boolean isPlayer = sender instanceof Player;
@@ -101,6 +131,18 @@ public class BalanceCommand extends CoreCommand {
         helpMenu(sender);
     }
 
+    /**
+     * Processes a balance-related action for a specific player. Determines the type of
+     * action to be performed based on the provided action parameter, such as setting,
+     * adding, or subtracting a balance amount.
+     *
+     * @param player The player for whom the balance action is being performed.
+     * @param amount The amount to set, add, or subtract from the player's balance.
+     * @param source The source or reason for the balance modification.
+     * @param action The action to perform. Valid values are "set", "add", or "minus".
+     * @return {@code true} if the action was successfully processed;
+     *         {@code false} if the action was invalid.
+     */
     private boolean process(CPlayer player, int amount, String source, String action) {
         switch (action.toLowerCase()) {
             case "set":
@@ -117,6 +159,15 @@ public class BalanceCommand extends CoreCommand {
         }
     }
 
+    /**
+     * Displays a help menu with information about available balance-related commands
+     * to the specified command sender. This includes command usage details for fetching,
+     * setting, adding, or subtracting a player's balance.
+     *
+     * @param sender The command sender receiving the help menu. This can be a {@code Player},
+     *               {@code ConsoleCommandSender}, or {@code BlockCommandSender}. The output
+     *               is sent directly to the sender.
+     */
     private void helpMenu(CommandSender sender) {
         sender.sendMessage(ChatColor.YELLOW
                 + "/balance [player] - Gets the amount of money a player has.");

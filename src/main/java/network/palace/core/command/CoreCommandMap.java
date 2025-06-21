@@ -15,23 +15,56 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
 
+/// Old documentation
+/// This is a command map for the plugin, and will most likely be modified to provide some level of more interesting functionality.
+
 /**
- * This is a command map for the plugin, and will most likely be modified to provide some level of more interesting functionality.
+ * CoreCommandMap is responsible for managing and registering custom commands
+ * within a Bukkit/Spigot plugin ecosystem. It serves as an abstraction layer
+ * for registering commands, handling aliases, descriptions, and usages,
+ * and managing their presence in the Bukkit command map.
  */
 public final class CoreCommandMap {
 
+    /**
+     * Represents a mapping of top-level command names to their corresponding {@link CoreCommand} instances.
+     * This map is used to manage and store command registrations within the CoreCommandMap.
+     * <p>
+     * The keys in the map represent the names of the commands, while the values are the corresponding
+     * {@link CoreCommand} objects that handle the functionality of each command.
+     * <p>
+     * This map is immutable upon declaration and can be updated using methods provided by the containing
+     * CoreCommandMap class.
+     */
     @Getter
     private final Map<String, CoreCommand> topLevelCommands = new HashMap<>();
+
+    /**
+     * Represents the instance of the JavaPlugin that is associated with this command map.
+     * The plugin serves as the main plugin reference and is used to manage the lifecycle
+     * and registration of commands within the Bukkit/Spigot server environment.
+     * <p>
+     * It is a final field, ensuring that the same plugin instance is consistently used
+     * throughout the lifespan of this command map.
+     */
     private final JavaPlugin plugin;
 
+    /**
+     * Constructor for the CoreCommandMap class. This initializes an instance of the
+     * CoreCommandMap with the specified plugin.
+     *
+     * @param plugin The instance of the JavaPlugin that this command map is associated with.
+     */
     public CoreCommandMap(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * Registers a command for handling.
+     * Registers a command with the Bukkit server, ensuring it is properly set as an executor,
+     * tab completer, and meta information such as aliases, description, and usage are applied.
+     * The command is also logged and stored in the internal command map.
      *
-     * @param command The command to register.
+     * @param command The CoreCommand instance to be registered with the server.
      */
     public void registerCommand(CoreCommand command) {
         // Check if we have the command registered using the same name
@@ -64,9 +97,12 @@ public final class CoreCommandMap {
     }
 
     /**
-     * Creates a new instance of the command
+     * Creates a new instance of a Bukkit {@link PluginCommand} using reflection. This method
+     * allows the instantiation of a PluginCommand with a specified name and associated plugin.
      *
-     * @return new PluginCommand instance of the requested command name
+     * @param name The name of the command to create.
+     * @param plugin The plugin that the command is associated with.
+     * @return A new instance of {@link PluginCommand} or null if an exception occurs.
      */
     private PluginCommand getCommand(String name, org.bukkit.plugin.Plugin plugin) {
         PluginCommand command = null;
@@ -81,9 +117,10 @@ public final class CoreCommandMap {
     }
 
     /**
-     * Gets the command map from bukkit
+     * Retrieves the CommandMap instance from the Bukkit server using reflection.
+     * The CommandMap provides access to the server's command registration and handling system.
      *
-     * @return The command map from bukkit
+     * @return The CommandMap instance associated with the Bukkit server, or null if an exception occurs during retrieval.
      */
     private CommandMap getCommandMap() {
         CommandMap commandMap = null;
@@ -99,9 +136,14 @@ public final class CoreCommandMap {
     }
 
     /**
-     * Gets the known commands for the command map
+     * Retrieves the known commands from the provided CommandMap instance using reflection.
+     * This method accesses the "knownCommands" field of the CommandMap, allowing access
+     * to the mapping of command names to their respective Command objects.
      *
-     * @return A hashmap of the known commands from the command map
+     * @param commandMap The CommandMap instance from which the known commands are to be retrieved.
+     *                   This should be an instance of SimpleCommandMap or a compatible subclass.
+     * @return A map of command names to their respective Command objects. If an exception occurs,
+     *         an empty map is returned.
      */
     @SuppressWarnings("unchecked")
     private Map<String, Command> getKnownCommands(CommandMap commandMap) {
@@ -117,9 +159,10 @@ public final class CoreCommandMap {
     }
 
     /**
-     * Removes a known command from the command map.
+     * Removes a known command from the internal command map. This allows for the
+     * unregistering of a command name from the server's command system.
      *
-     * @param commandName The command name to unregister.
+     * @param commandName The name of the command to be removed from the known commands map.
      */
     private void removeKnownCommand(String commandName) {
         Map<String, Command> knownCommands = getKnownCommands(getCommandMap());
@@ -127,9 +170,14 @@ public final class CoreCommandMap {
     }
 
     /**
-     * Removes a known command from bukkit, minecraft, and more.
+     * Removes multiple known command mappings based on the provided command name.
+     * The method removes the command with three variations of its name: prefixed with
+     * "minecraft:", prefixed with "bukkit:", and the name as-is. This ensures the
+     * complete unregistration of the command across those namespaces.
      *
-     * @param commandName The command name to unregister.
+     * @param commandName The base command name to be removed. The method will
+     *                    attempt to remove the command with the provided name and
+     *                    common namespace prefixes.
      */
     public void removeKnownCommands(String commandName) {
         removeKnownCommand("minecraft:" + commandName);
@@ -138,10 +186,10 @@ public final class CoreCommandMap {
     }
 
     /**
-     * Gets a current command by the name you specify.
+     * Retrieves a CoreCommand instance by its name from the top-level commands map.
      *
-     * @param name The name you are looking for.
-     * @return The command by that name or null if it cannot find the command.
+     * @param name The case-sensitive name of the command to retrieve.
+     * @return The CoreCommand instance associated with the given name, or null if no matching command is found.
      */
     public CoreCommand getCommandByName(String name) {
         return topLevelCommands.get(name);

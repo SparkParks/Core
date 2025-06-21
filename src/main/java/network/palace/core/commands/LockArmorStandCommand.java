@@ -14,9 +14,45 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
+/**
+ * The LockArmorStandCommand class provides functionality to toggle the lock state
+ * of an Armor Stand within a specific range around the player. This lock state
+ * determines whether players can edit the items on the Armor Stand.
+ * <p>
+ * This command identifies the closest Armor Stand to the player, within a
+ * predefined distance, and toggles its editable lock state. The locking
+ * mechanism is dependent on the server's Minecraft version, making use of
+ * reflection to access and modify internal NMS fields.
+ * <p>
+ * The command is registered under the name "lockarmorstand" and can only be
+ * executed by players with sufficient rank as specified in the command metadata.
+ * <p>
+ * Features:
+ * - Finds the nearest Armor Stand to the player within two blocks.
+ * - Toggles the locked/unlocked state of the Armor Stand.
+ * - Sends feedback messages to the player regarding the Armor Stand's new state.
+ * - Handles version-specific differences in NMS field names dynamically.
+ * <p>
+ * Exceptions:
+ * - Catches and logs exceptions related to reflection, such as NoSuchFieldException
+ *   and ClassNotFoundException, ensuring the stability of the command execution.
+ * <p>
+ * This command is typically used in custom gameplay mechanics for managing
+ * or protecting Armor Stands in player-built environments.
+ */
 @CommandMeta(description = "Toggle whether players can edit the items on an armor stand", rank = Rank.CM)
 public class LockArmorStandCommand extends CoreCommand {
 
+    /**
+     * Constructs an instance of the LockArmorStandCommand class.
+     * <p>
+     * This command is designed to manage the locking of armor stands in the application.
+     * By setting the command name to "lockarmorstand", it allows for specific functionality
+     * related to locking armor stands to be executed within the command framework.
+     * <p>
+     * This command inherits from the CoreCommand class, enabling seamless integration
+     * with the command handling system and leveraging the base functionality provided.
+     */
     public LockArmorStandCommand() {
         super("lockarmorstand");
     }

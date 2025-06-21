@@ -63,6 +63,16 @@ import java.util.concurrent.TimeoutException;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
+
+/**
+ * Represents the main Core system responsible for managing the lifecycle and configuration
+ * of the application. This class provides initialization, enabling, disabling, and various
+ * utility methods to manage the core functionality of the server.
+ * <p>
+ * The Core class handles interactions with key managers, configurations, command registration,
+ * event listeners, and integration with external services like databases and plugins.
+ * It serves as the central point for coordinating the application's operations.
+ */
 @PluginInfo(name = "Core", version = "2.8.4", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
 public class Core extends JavaPlugin {
     /**
@@ -90,7 +100,7 @@ public class Core extends JavaPlugin {
      * Represents the timestamp when this instance of the Core class was initialized.
      * This value is assigned at the time of object creation and remains constant
      * throughout the lifecycle of the instance.
-     *
+     * <p>
      * The timestamp is stored as the number of milliseconds since the Unix epoch
      * (January 1, 1970, 00:00:00 GMT).
      */
@@ -100,7 +110,7 @@ public class Core extends JavaPlugin {
      * Represents the playground mode status for the core.
      * This field is static, meaning it is shared across all instances of the class,
      * and is not instance-specific. The field is set to false by default.
-     *
+     * <p>
      * When true, the core operates in playground mode, which may enable experimental
      * or testing functionalities. When false, these functionalities are disabled.
      */
@@ -115,7 +125,7 @@ public class Core extends JavaPlugin {
 
     /**
      * Specifies the type of the server.
-     *
+     * <p>
      * This variable is used to define the current role or type of the server, such as "Hub".
      * The value of this variable can influence the behavior or configuration of the server instance
      * depending on its designated type.
@@ -157,14 +167,14 @@ public class Core extends JavaPlugin {
 
     /**
      * Indicates whether the title should be displayed to players during the login process.
-     *
+     * <p>
      * The value is set to `false` by default, meaning the title will not appear on login unless explicitly enabled.
      */
     @Getter private boolean showTitleOnLogin = false;
 
     /**
      * Represents the title message displayed to players upon login.
-     *
+     * <p>
      * This variable is used to set a custom title that will be shown
      * to players when they log into the server. By default, it is an empty string.
      */
@@ -194,7 +204,7 @@ public class Core extends JavaPlugin {
     /**
      * The duration in ticks for which the title fades out when displayed during player login.
      * This fade-out duration helps create a smooth transition effect when a title disappears.
-     *
+     * <p>
      * Default value is set to 10 ticks.
      */
     @Getter private int loginTitleFadeOut = 10;
@@ -218,7 +228,7 @@ public class Core extends JavaPlugin {
      * A static instance of the {@link MessageHandler} class that provides functionality
      * for managing and handling messages, such as broadcasting messages to players
      * or logging specific text output in the system.
-     *
+     * <p>
      * This field is a central message handling utility used across the core system,
      * ensuring consistent management of messages throughout the application.
      * It is statically accessible for ease of use within the core context.
@@ -271,7 +281,7 @@ public class Core extends JavaPlugin {
 
     /**
      * Manages the behavior and lifecycle of SoftNPCs (non-player characters) within the system.
-     *
+     * <p>
      * The SoftNPCManager is responsible for creating, updating, and managing the state of
      * NPCs, including their attributes, interactions, and associated tasks.
      * This variable operates within the Core framework and integrates with other
@@ -283,7 +293,7 @@ public class Core extends JavaPlugin {
      * Manages player-specific data and operations within the application.
      * This includes handling player-related functionalities such as tracking,
      * permissions, statistics, and other player-associated features.
-     *
+     * <p>
      * It serves as the primary interface for accessing and manipulating player-related
      * data and provides an organized structure for player management.
      */
@@ -352,9 +362,9 @@ public class Core extends JavaPlugin {
      * Handles the enabling of the plugin during the server startup or reload.
      * This method is responsible for initializing core components, configurations,
      * managing player data, and preparing the plugin for operation.
-     *
+     * <p>
      * The following actions are performed in this method:
-     *
+     * <p>
      * - Kicks all currently online players to ensure a clean reload.
      * - Determines the current Minecraft server version.
      * - Loads required external libraries and dependencies.
@@ -516,12 +526,12 @@ public class Core extends JavaPlugin {
      * Registers various listeners required for the application. This method sets up
      * the necessary event handling by associating specific listeners to the system
      * for proper functionality.
-     *
+     * <p>
      * The listeners being registered include:
      * - An item utility listener.
      * - A prefix command listener.
      * - A crafting menu listener.
-     *
+     * <p>
      * This method ensures that all relevant components are wired correctly
      * to respond to their respective events.
      */
@@ -547,12 +557,12 @@ public class Core extends JavaPlugin {
      * the application. Additionally, it dynamically checks for the presence
      * of a specific plugin ("ParkManager") to conditionally register
      * the TeleportCommand.
-     *
+     * <p>
      * The commands include core functionalities such as:
      * - Managing achievements, balance, and player stats.
      * - Interactions such as messaging, teleporting, and toggling tags.
      * - Administrative operations like reload and shutdown.
-     *
+     * <p>
      * If the "ParkManager" plugin is not detected in the system,
      * the TeleportCommand is registered as part of the initialization process.
      */
@@ -601,16 +611,16 @@ public class Core extends JavaPlugin {
 
     /**
      * Method executed when the server is disabled.
-     *
+     * <p>
      * This method is responsible for performing necessary cleanup tasks
      * and notifying relevant systems of the server shutdown. It updates the server's
      * status in the database, sends a staff notification about the shutdown, and logs the shutdown event.
-     *
+     * <p>
      * Actions performed:
      * - Updates the server's online status in the database to reflect it being offline.
      * - Notifies staff members about the server shutdown through a message handler.
      * - Logs a shutdown message for administrative purposes.
-     *
+     * <p>
      * Handles exceptions that might occur during the shutdown process to ensure the application
      * can complete the disable sequence gracefully.
      */
@@ -1003,7 +1013,7 @@ public class Core extends JavaPlugin {
 
     /**
      * Executes the given task asynchronously using the Bukkit scheduler.
-     *
+     * <p>
      * This method schedules the provided {@link Runnable} task to be executed asynchronously,
      * meaning it will not block the main thread. The task will be processed by the server's
      * asynchronous task scheduler.

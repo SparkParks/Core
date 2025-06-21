@@ -14,19 +14,49 @@ import org.bukkit.command.CommandSender;
 import java.io.IOException;
 
 /**
- * Server shutdown command.
+ * A command for managing the server shutdown process, allowing for scheduled shutdowns
+ * with optional delays or immediate cancellation of any ongoing shutdown.
+ * This command is restricted to users with the appropriate rank.
+ * <p>
+ * Features:
+ * - Schedule a server shutdown with a specified delay in seconds.
+ * - Broadcast countdown messages to players at specific intervals before shutdown.
+ * - Cancel a pending shutdown.
+ * - Automatically saves all worlds and attempts to notify proxies before shutting down.
  */
 @CommandMeta(description = "Safely stop the server.", aliases = "sd", rank = Rank.DEVELOPER)
 public class ShutdownCommand extends CoreCommand {
+    /**
+     * Represents the unique identifier for a task associated with the execution
+     * of the command. This variable is used internally to track and manage tasks
+     * initiated by the command.
+     */
     private int taskID = 0;
 
     /**
-     * Instantiates a new Safestop command.
+     * Constructs a new instance of the ShutdownCommand.
+     * <p>
+     * This command is used to initiate a server shutdown sequence. It is typically
+     * executed by administrators or by processes requiring controlled server termination.
+     * <p>
+     * The command is initialized with the name "shutdown" to serve as its identifier
+     * in the command system.
      */
     public ShutdownCommand() {
         super("shutdown");
     }
 
+    /**
+     * Handles the execution of the "shutdown" command with various arguments.
+     * This method processes commands for scheduling or canceling a server shutdown.
+     *
+     * @param sender The entity or player who issued the command.
+     * @param args The arguments provided with the command.
+     *             - If empty, displays usage information.
+     *             - If the first argument is "cancel", cancels a pending shutdown if any.
+     *             - If the first argument is a number, schedules a shutdown after the specified delay (in seconds).
+     * @throws CommandException If an error occurs during the execution of the command.
+     */
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         if (args.length == 0) {
@@ -85,6 +115,15 @@ public class ShutdownCommand extends CoreCommand {
         }, 0L, 1L);
     }
 
+    /**
+     * Broadcasts a server restart message to all players if the specified time in seconds
+     * corresponds to specific intervals (e.g., 1 minute, 30 seconds, etc.).
+     * The message includes the name of the server and a countdown until restart.
+     *
+     * @param seconds The time in seconds until the restart. The method only broadcasts a message
+     *                if the value is exactly 30 seconds, 60 seconds, or a multiple of 60 seconds
+     *                (e.g., 2 minutes or more).
+     */
     public void message(int seconds) {
         if (seconds <= 0) {
             return;

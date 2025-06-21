@@ -20,18 +20,42 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 /**
- * The type Reload command.
+ * Represents the ReloadCommand, enabling developers to reload individual Core plugins
+ * or specific components of the Core system such as Mongo handlers and resource managers.
+ * This command provides functionality to dynamically unload, reload, and reinitialize
+ * JavaPlugin instances within a running server.
+ * <p>
+ * Key functionality includes:
+ * - Reloading specific components of the Core system (e.g., MongoHandlers, LanguageFormatters).
+ * - Reloading individual Core plugins by disabling the plugin, reloading its JAR, and re-enabling it.
+ * - Handling scenarios where plugins do not exist, are not Core plugins, or do not support reloading.
+ * <p>
+ * Note: This command is restricted to users with developer-level permissions.
  */
 @CommandMeta(aliases = {"rl"}, description = "Reload individual Core plugins.", rank = Rank.DEVELOPER)
 public class ReloadCommand extends CoreCommand {
 
     /**
-     * Instantiates a new Reload command.
+     * Constructs a new ReloadCommand instance with the command name set to "reload".
+     * This command is typically used to trigger a reload operation, such as reloading
+     * configuration files or refreshing application states. The specifics of the reload
+     * behavior are defined in the command handling logic that extends this class.
      */
     public ReloadCommand() {
         super("reload");
     }
 
+    /**
+     * Handles the execution of the unspecified "reload" command, allowing for reloading specific plugins
+     * or the Core system within the application. This method processes the command input, validates arguments,
+     * and performs actions such as reloading plugins or system components.
+     *
+     * @param sender the sender of the command, which could be a player, console, or other command source
+     * @param args the arguments passed with the command, where the first argument typically specifies
+     *             the plugin or Core system to be reloaded and an optional second argument specifies the
+     *             file name of the new plugin jar
+     * @throws CommandException if an error occurs during command execution or processing
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
