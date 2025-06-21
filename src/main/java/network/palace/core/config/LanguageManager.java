@@ -62,14 +62,17 @@ public class LanguageManager {
      * information, and organizes it into a structured format for future use. It clears
      * existing language mappings before processing the new data.
      * <p>
-     * Steps:
+     * Steps: <p>
      * 1. Retrieves a JSON object from the URL using {@link MiscUtil#readJsonFromUrl(String)}.
+     * <p>
      * 2. Validates and ensures the presence of data in a specific structure:
      *    - Expects a "feed" node and an "entry" array within the JSON object.
+     * <p>
      * 3. Iterates through the "entry" array to:
      *    - Parse language headers and mappings.
      *    - Extract and map language keys and values.
      *    - Construct a mapping of languages and their respective translations.
+     * <p>
      * 4. Skips invalid or empty data entries encountered during parsing.
      * <p>
      * Data parsing adheres to the format where:

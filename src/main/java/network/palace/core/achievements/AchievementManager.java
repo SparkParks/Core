@@ -56,7 +56,9 @@ public class AchievementManager {
      * Initializes the AchievementManager by scheduling asynchronous tasks for achievement management.
      * <p>
      * This method sets up two periodic tasks:
+     * <p>
      * 1. A task to reload achievements at a fixed interval.
+     * <p>
      * 2. A task to persist earned achievements to the database at a fixed interval.
      * <p>
      * The reload task ensures that achievements are kept updated, while the persistence task ensures
@@ -87,8 +89,10 @@ public class AchievementManager {
      * new achievements.
      * <p>
      * Note:
+     * <p>
      * - The JSON structure is expected to include a "feed" element containing entries with
      *   "content" and "title" values.
+     * <p>
      * - Each entry represents an achievement-related piece of information.
      */
     public void reload() {

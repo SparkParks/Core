@@ -12,8 +12,11 @@ import lombok.Setter;
  * to manage achievement data and handle user progress.
  * <p>
  * Fields:
+ * <p>
  * - id: A unique identifier for the achievement.
+ * <p>
  * - displayName: The name displayed to users for this achievement.
+ * <p>
  * - description: A brief description or details about the achievement.
  */
 @AllArgsConstructor

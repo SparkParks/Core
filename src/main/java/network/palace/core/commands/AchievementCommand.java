@@ -21,10 +21,15 @@ import org.bukkit.command.CommandSender;
  * /ach [ID] [Username]
  * <p>
  * Functionality:
+ * <p>
  * - Validates input arguments to ensure proper ID and username format.
+ * <p>
  * - Retrieves an achievement by its ID using the system's achievement manager.
+ * <p>
  * - Fetches the target player using the system's player manager.
+ * <p>
  * - Awards the specified achievement to the target player, if all conditions are met.
+ * <p>
  * - Sends appropriate feedback messages to the command sender if any validation fails.
  */
 @CommandMeta(description = "Award an achievement to a player", rank = Rank.CM)

@@ -43,32 +43,52 @@ import java.util.stream.Collectors;
  * for handling command execution and tab completion.
  * <p>
  * Fields:
+ * <p>
  * - `subCommands`: A list of sub-commands registered under this command.
+ * <p>
  * - `name`: The name of the main command.
+ * <p>
  * - `superCommand`: The parent command, if applicable, for nested commands.
+ * <p>
  * - `rank`: Required rank level to execute this command.
+ * <p>
  * - `description`: A textual description of the command.
  * <p>
  * Constructors:
+ * <p>
  * - Protected constructors allow for the creation of commands with or without sub-commands.
  * <p>
  * Key Methods:
- * - `registerSubCommand`: Allows registration of sub-commands dynamically after initialization.
- * - `unregisterSubCommand`: Removes specific sub-commands from this command.
- * - `getSubCommands`: Returns an immutable list of registered sub-commands.
- * - `regenerateHelpCommand`: Regenerates a help command based on available sub-commands.
- * - `onCommand`: Handles the execution of the main command or its sub-commands.
- * - `onTabComplete`: Handles the tab completion logic for the command.
- * - `handleCommandException`: Designed to be overridden to provide custom exception handling
+ * <p>
+ * - {@code registerSubCommand}: Allows registration of sub-commands dynamically after initialization.
+ * <p>
+ * - {@code unregisterSubCommand}: Removes specific sub-commands from this command.
+ * <p>
+ * - {@code getSubCommands}: Returns an immutable list of registered sub-commands.
+ * <p>
+ * - {@code regenerateHelpCommand}: Regenerates a help command based on available sub-commands.
+ * <p>
+ * - {@code onCommand}: Handles the execution of the main command or its sub-commands.
+ * <p>
+ * - {@code onTabComplete}: Handles the tab completion logic for the command.
+ * <p>
+ * - {@code handleCommandException}: Designed to be overridden to provide custom exception handling
  *   for errors during command execution.
- * - `getSubCommandFor`: Retrieves a specific sub-command by name.
- * - `getSubCommandsForPartial`: Retrieves sub-commands that partially match a provided string.
+ * <p>
+ * - {@code getSubCommandFor}: Retrieves a specific sub-command by name.
+ * <p>
+ * - {@code getSubCommandsForPartial}: Retrieves sub-commands that partially match a provided string.
+ * <p>
  * - Default and customizable handle methods: Provide functionality for dealing
  *   with commands dispatched by console, players, block command senders, or unknown types.
- * - `handleTabComplete`: Supports custom tab-completion behavior that subclasses can override.
- * - `isUsingSubCommandsOnly`: Hook for determining behavior related to sub-command-only usage.
- * - `getFormattedName`: Provides a formatted name for display or representation purposes.
- * - Overridden `toString`: Returns a string representation of the command.
+ * <p>
+ * - {@code handleTabComplete}: Supports custom tab-completion behavior that subclasses can override.
+ * <p>
+ * - {@code isUsingSubCommandsOnly}: Hook for determining behavior related to sub-command-only usage.
+ * <p>
+ * - {@code getFormattedName}: Provides a formatted name for display or representation purposes.
+ * <p>
+ * - Overridden {@code toString}: Returns a string representation of the command.
  */
 public abstract class CoreCommand implements CommandExecutor, TabCompleter {
 
