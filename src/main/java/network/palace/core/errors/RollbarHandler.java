@@ -4,15 +4,56 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 /**
- * @author Innectic
- * @since 6/4/2017
+ * Handler class for integrating with the Rollbar error tracking and monitoring service.
+ * The `RollbarHandler` is responsible for sending error, warning, and informational
+ * messages to Rollbar, as well as handling uncaught exceptions and reporting them.
+ * <p>
+ * This class interacts with the Rollbar API and posts log data such as log levels,
+ * environment details, stack traces, and other context to the service for monitoring
+ * and debugging purposes.
  */
 @RequiredArgsConstructor
 public class RollbarHandler {
 
+    /**
+     * The access token used for authenticating with the logging service.
+     * This token is required to interact with external services such as Rollbar
+     * for error reporting and log management.
+     * <p>
+     * It is a final and immutable string, ensuring that the token value
+     * remains constant throughout the lifecycle of the application.
+     */
     private final String accessToken;
+
+    /**
+     * The environment type in which the application is currently operating.
+     * This variable holds a value from the {@code EnvironmentType} enum, which
+     * represents predefined constants such as production, staging, or local
+     * development environments. It is used to identify and configure behavior
+     * specific to the target environment.
+     * <p>
+     * This field is immutable and final, indicating that the environment cannot
+     * be changed once set.
+     */
     private final EnvironmentType environment;
+
+    /**
+     * The URL endpoint used for sending log or error messages to the Rollbar API.
+     * This constant defines the base URL for interacting with Rollbar's error-reporting service.
+     * It specifies the API endpoint to which error data is sent.
+     */
     private String URL_STRING = "https://api.rollbar.com/api/1/item/";
+
+    /**
+     * An instance of {@code ObjectMapper} used for converting
+     * Java objects to and from JSON. This utility is provided
+     * by the Jackson library and offers comprehensive capabilities
+     * for serialization and deserialization of data.
+     * <p>
+     * The {@code mapper} variable is essential for facilitating
+     * JSON processing, making it easier to interact with external
+     * services or store structured data in a JSON format.
+     */
     private ObjectMapper mapper = new ObjectMapper();
 
     /**
