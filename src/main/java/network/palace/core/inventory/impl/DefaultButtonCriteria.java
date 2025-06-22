@@ -5,7 +5,7 @@ import network.palace.core.player.CPlayer;
 
 /**
  * Default implementation of the ButtonCriteria interface.
- *
+ * <p>
  * This class provides a simple and consistent criterion where the button
  * is always visible regardless of the player's context or state.
  */
