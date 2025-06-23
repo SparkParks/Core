@@ -1,0 +1,14 @@
+{
+  "name": "Pack Name",
+  "versions": [
+    {
+      "id": 758,
+      "url": "https://cdn.example.com/classic.zip",
+      "hash": "abc123"
+    },
+    {
+      "id": 759,
+      "url": "https://cdn.example.com/classic1_20.zip"
+    }
+  ]
+}

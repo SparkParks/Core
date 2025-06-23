@@ -1,0 +1,5 @@
+{
+  "name": "resourcePackName",
+  "url": "https://cdn.example.com/rpack.zip",
+  "hash": "def456"
+}

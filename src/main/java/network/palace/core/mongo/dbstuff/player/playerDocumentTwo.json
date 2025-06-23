@@ -1,9 +1,7 @@
 {
   "uuid": "player-uuid-object",
   "username": "playerName",
-  "previousNames": [
-    "name1", "name-2", "Name3"
-  ],
+  "previousNames": ["name1", "name-2", "Name3"],
   "balance": 250,
   "tokens": 1,
   "server": "Hub1",
@@ -37,7 +35,7 @@
     {
       "reason": "kick reason",
       "time": 1729718123456,
-      "source":"DarthRevan01"
+      "source": "DarthRevan01"
     }
   ],
   "mutes": [
@@ -61,11 +59,7 @@
     }
   },
   "parks": {
-    "storage": [
-      {
-
-      }
-    ],
+    "storage": [],
     "magicband": {
       "bandtype": "blue",
       "namecolor": "orange"
@@ -95,28 +89,75 @@
     "buildmode": false,
     "inventories": [
       {
-        "resort": null,
-        "$": null
+        "resort": "Grand Floridian",
+        "grandfloridan_storage": {
+          "backpack": [
+            {
+              "type": "item-name",
+              "data": 0,
+              "amount": 20,
+              "tag": "item-tag"
+            }
+          ],
+          "locker": [
+            {
+              "type": "diamond_sword",
+              "data": 0,
+              "amount": 1,
+              "tag": "item-tag"
+            },
+            {
+              "type": "iron_sword",
+              "data": 1,
+              "amount": 1,
+              "tag": "item-tag"
+            }
+          ],
+          "base": [
+            {
+              "type": "item-name",
+              "data": 0,
+              "amount": 20,
+              "tag": "item-tag"
+            }
+          ],
+          "build": [
+            {
+              "type": "diamond",
+              "data": 0,
+              "amount": 1,
+              "tag": "item-tag"
+            },
+            {
+              "type": "iron_ingot",
+              "data": 1,
+              "amount": 2,
+              "tag": "item-tag"
+            }
+          ],
+          "backpacksize": 36,
+          "lockersize": 54
+        }
       }
-    ]
+    ],
+    "creative": {
+      "particle": "none",
+      "rptag": false,
+      "rplimit": 5,
+      "showcreator": false,
+      "creator": false,
+      "creatortag": false,
+      "resourcepack": "none"
+    },
+    "vote": {
+      "lastTime": 0,
+      "lastSite": 0
+    },
+    "monthlyRewards": {
+      "settler": 0
+    },
+    "tutorial": false
   },
-  "creative": {
-    "particle": "none",
-    "rptag": false,
-    "rplimit": 5,
-    "showcreator": false,
-    "creator": false,
-    "creatortag": false,
-    "resourcepack": "none"
-  },
-  "vote": {
-    "lastTime": 0,
-    "lastSite": 0
-  },
-  "monthlyRewards": {
-    "settler": 0
-  },
-  "tutorial": false,
   "settings": {
     "mentions": true,
     "friendRequestToggle": true
