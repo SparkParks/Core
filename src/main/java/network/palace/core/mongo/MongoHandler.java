@@ -48,10 +48,13 @@ public class MongoHandler {
     private MongoClient client = null;
 
     /**
-     * Represents the MongoDatabase instance used for interacting with the MongoDB.
-     * This variable holds the connection to the database and allows performing
-     * various database operations such as querying and updating listOfCollections.txt.
-     * It is initialized as null and should be properly set before use.
+     * The `database` variable represents a MongoDB database instance
+     * used to interact with collections and documents in the MongoDB
+     * server.
+     *
+     * It is initialized as null and needs to be set appropriately
+     * before performing operations with this database instance.
+     * Ensure the database connection is properly configured and established.
      */
     @Getter private MongoDatabase database = null;
 
@@ -200,7 +203,7 @@ public class MongoHandler {
      * and shut down the Bukkit server.
      * <p>
      * This method initializes MongoDB client and retrieves references to predefined
-     * listOfCollections.txt used within the application, such as activity, players, friends,
+     * used within the application, such as activity, players, friends,
      * permissions, resource packs, ride counters, and more.
      * <p>
      * Configuration keys used:
