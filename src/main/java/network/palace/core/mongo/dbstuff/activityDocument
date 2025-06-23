@@ -1,0 +1,5 @@
+{
+  "uuid": "activity-uuid",
+  "action": "action-performed",
+  "description": "additional details or context about the action"
+}

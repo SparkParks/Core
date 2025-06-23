@@ -1,0 +1,174 @@
+{
+  "uuid": "player-uuid-object",
+  "username": "playerName",
+  "previousNames": [
+    "name1", "name-2", "Name3"
+  ],
+  "balance": 250,
+  "tokens": 1,
+  "server": "Hub1",
+  "currentServer": "Hub1",
+  "ip": "localhost",
+  "isp": "localhost",
+  "country": "",
+  "region": "",
+  "regionName": "",
+  "timezone": "",
+  "lang": "en_US",
+  "minecraftVersion": "playerMcVersion",
+  "honor": 1,
+  "rank": "rankDbName",
+  "tags": "tagDBName",
+  "lastOnline": 1729718123456,
+  "onlineTime": 1,
+  "adventure": 1,
+  "isVisible": true,
+  "currentMute": null,
+  "skin": {
+    "hash": "",
+    "signature": ""
+  },
+  "cosmetics": [
+    {
+      "id": 0
+    }
+  ],
+  "kicks": [
+    {
+      "reason": "kick reason",
+      "time": 1729718123456,
+      "source":"DarthRevan01"
+    }
+  ],
+  "mutes": [
+    {
+      "created": 1729718123456,
+      "expires": 1729718123456,
+      "reason": "talked too much during fireworks",
+      "source": "DarthRevan01",
+      "active": true
+    }
+  ],
+  "bans": {
+    "isBanned": true,
+    "currentBan": {
+      "created": 1729718123456,
+      "expires": 1729718123456,
+      "permanent": false,
+      "reason": "Using exploits to gain information",
+      "source": "DarthRevan01",
+      "active": true
+    }
+  },
+  "parks": {
+    "storage": [
+      {
+
+      }
+    ],
+    "magicband": {
+      "bandtype": "blue",
+      "namecolor": "orange"
+    },
+    "fastpass": {
+      "slow": 0,
+      "moderate": 0,
+      "thrill": 0,
+      "sday": 0,
+      "mday": 0,
+      "tday": 0
+    },
+    "rides": [],
+    "outfit": "0,0,0,0",
+    "outfitPurchases": [
+      {
+        "id": 0,
+        "time": 1729718123456
+      }
+    ],
+    "settings": {
+      "visibility": true,
+      "flash": true,
+      "hotel": true,
+      "pack": ""
+    },
+    "buildmode": false,
+    "inventories": [
+      {
+        "resort": null,
+        "$": null
+      }
+    ]
+  },
+  "creative": {
+    "particle": "none",
+    "rptag": false,
+    "rplimit": 5,
+    "showcreator": false,
+    "creator": false,
+    "creatortag": false,
+    "resourcepack": "none"
+  },
+  "vote": {
+    "lastTime": 0,
+    "lastSite": 0
+  },
+  "monthlyRewards": {
+    "settler": 0
+  },
+  "tutorial": false,
+  "settings": {
+    "mentions": true,
+    "friendRequestToggle": true
+  },
+  "achievements": {
+    "id": 0,
+    "time": 1729718123456
+  },
+  "autographs": [
+    {
+      "author": "The name or identifier of the person signing the autograph.",
+      "message": "The message or note that will be included in the autograph entry",
+      "time": 1729718123456
+    }
+  ],
+  "transactions": [
+    {
+      "amount": 100,
+      "type": "currency type being modified",
+      "source": "The source or reason for the currency modification (e.g., event, purchase)."
+    }
+  ],
+  "gameData": {
+    "gameDBName": {
+      "statisticType": "the value to set for the statistic as an int"
+    }
+  },
+  "ignoring": [
+    {
+      "uuid": "player-uuid",
+      "started": 1729718123456
+    }
+  ],
+  "online": true,
+  "onlineData": {
+    "parkStorageLock": "ServerName",
+    "proxy": "proxy-id-string",
+    "server": "Hub1"
+  },
+  "discord": {
+    "discordID": "Discord ID here"
+  },
+  "titanLogin": {
+    "code": "ABC123",
+    "expires": 1729718123
+  },
+  "forums": {
+    "member_id": 12345,
+    "linking-code": "ABCDEF"
+  },
+  "afklogs": [
+    1729718123456,
+    1729719134567
+  ]
+}

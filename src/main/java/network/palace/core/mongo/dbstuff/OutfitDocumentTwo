@@ -1,0 +1,9 @@
+{
+  "id": 0,
+  "name": "the name of the outfit",
+  "headJSON": "the head accessory details in JSON string format",
+  "shirtJSON": "the shirt details in JSON string format",
+  "pantsJSON": "the pants details in JSON string format",
+  "bootsJSON": "the boots details in JSON string format",
+  "resort": 0
+}

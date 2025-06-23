@@ -1,0 +1,17 @@
+{
+  "id": 0
+  "name": "outfit-name",
+  "headID": 0,
+  "headData": 0,
+  "head": "The name or description of the head item",
+  "chestID": 0,
+  "chestData": 0,
+  "chest": "The name or description of the chestplate item",
+  "leggingsID": 0,
+  "leggingsData": 0,
+  "leggings": "The name or description of the leggings item",
+  "bootsID": 0,
+  "bootsData": 0,
+  "boots": "The name or description of the boots item",
+  "resort": 0
+}

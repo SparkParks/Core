@@ -1,0 +1,29 @@
+(Seen in Core)
+1. activity
+2. player
+3. friends
+4. permission
+5. resourcePack
+6. rideCounter
+7. honorMapping
+8. outfits
+9. showSchedule
+10. hotel
+11. warps
+12. servers
+13. storage
+
+(Seen in BungeeCore)
+1. bans
+2. party
+3. player
+4. chat
+5. resourcePack
+6. servers
+7. titanApps
+8. serviceConfig
+9. helpRequest
+10. announcementRequest
+11. friends
+12. staffLogin
+13. virtualQueue

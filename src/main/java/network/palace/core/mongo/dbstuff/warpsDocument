@@ -1,0 +1,11 @@
+{
+  "name": "warp-name",
+  "server": "server-name",
+  "x": 100,
+  "y": 40,
+  "z": 100,
+  "yaw": 20,
+  "pitch": 50,
+  "world": "world-name",
+  "rank": "rank-dbName"
+}
