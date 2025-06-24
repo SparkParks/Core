@@ -16,30 +16,71 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * The type Permission manager.
+ * The PermissionManager class is responsible for managing permissions for different ranks
+ * and players in the application. It allows initialization, assignment, and modification
+ * of permissions, as well as handling permission attachments for specific players.
  */
 public class PermissionManager {
 
     /**
-     * Permission Nodes
+     * A mapping of ranks to their respective permissions. Each rank is associated with a
+     * map of permission nodes and their corresponding boolean values, indicating whether
+     * the permission is granted (true) or denied (false).
+     *
+     * This structure operates as the core of permission management, enabling retrieval,
+     * modification, and initialization of rank-based permissions across the system.
      */
     private Map<Rank, Map<String, Boolean>> permissions = new HashMap<>();
 
     /**
-     * The Attachments
+     * A map that associates unique player identifiers (UUIDs) with their respective
+     * permission attachments. This is used to manage and store permissions assigned
+     * to individual players in the system.
+     *
+     * The key represents the UUID of a player, and the value is the corresponding
+     * PermissionAttachment for that player, which allows for the dynamic management
+     * of permissions during runtime.
      */
     public Map<UUID, PermissionAttachment> attachments = new HashMap<>();
+
+    /**
+     * Holds the PermissionAttachment object for the console, allowing permissions to
+     * be dynamically managed for the ConsoleCommandSender.
+     *
+     * This variable is used in conjunction with the initialization process in
+     * the {@code initialize()} method, where it is assigned an attachment associated
+     * with the console sender. The permissions granted to the console are configured
+     * through modifications to this attachment.
+     *
+     * By maintaining this object, the PermissionManager class ensures that console
+     * permissions can be explicitly defined and cleared as needed.
+     */
     private PermissionAttachment consoleAttachment = null;
 
     /**
-     * Instantiates a new Permission manager.
+     * Constructs a new instance of the PermissionManager class and initializes
+     * the internal permissions structure. This method sets up default
+     * permissions, configures console attachments, and organizes the rank
+     * hierarchy to prepare the permission system for usage.
      */
     public PermissionManager() {
         initialize();
     }
 
     /**
-     * Initialize.
+     * Initializes the permissions system by preparing permissions for all ranks,
+     * attaching permissions to the console, and configuring permission inheritance.
+     * This method ensures that both console and player permissions are properly set up
+     * and synchronized based on the defined rank structure.
+     *
+     * Responsibilities include:
+     * - Clearing and refreshing the current permissions map.
+     * - Setting up rank-specific permissions and inheritance.
+     * - Configuring console sender permissions.
+     * - Updating online players' permissions to align with their ranks.
+     *
+     * The initialization process loops through all defined ranks in reverse order
+     * to handle inheritance of permissions correctly, from higher to lower ranks.
      */
     private void initialize() {
         permissions.clear();
@@ -85,23 +126,37 @@ public class PermissionManager {
     }
 
     /**
-     * Set permissions on login.
+     * Logs in a player by assigning appropriate permissions based on their rank.
+     * This method retrieves the player's rank, fetches the corresponding
+     * permissions, and applies them to the player's account.
      *
-     * @param player the player
+     * @param player the CPlayer object representing the player to be logged in.
+     *               It contains information about the player's rank and related data.
      */
     public void login(CPlayer player) {
         setPermissions(player.getBukkitPlayer(), getPermissions(player.getRank()));
     }
 
     /**
-     * Remove permission attachments
+     * Logs out a player by removing their associated attachments from the system.
+     * This method cleans up any permissions or data linked to the specified player.
      *
-     * @param uuid the uuid
+     * @param uuid the unique identifier of the player to be logged out
      */
     public void logout(UUID uuid) {
         attachments.remove(uuid);
     }
 
+    /**
+     * Assigns or updates a player's permissions based on the provided map of permission nodes.
+     * This method ensures that the player's existing permissions are cleared before applying
+     * the new set of permissions. If the player does not already have an attachment, a new one
+     * is created and stored for future reference.
+     *
+     * @param player the player whose permissions need to be set or updated
+     * @param perms  a map containing permission nodes as keys and their granted status
+     *               (true or false) as values
+     */
     private void setPermissions(Player player, Map<String, Boolean> perms) {
         PermissionAttachment attachment;
         if (attachments.containsKey(player.getUniqueId())) {
@@ -119,10 +174,16 @@ public class PermissionManager {
     }
 
     /**
-     * Gets permissions.
+     * Retrieves the permissions mapped to the given rank.
+     * This method fetches the permissions associated with the specified rank
+     * and returns them in a map format, where keys represent the permission nodes
+     * and values indicate whether the permission is granted (true) or denied (false).
+     * If no permissions are found for the rank, an empty map is returned.
      *
-     * @param rank the rank
-     * @return the permissions
+     * @param rank the rank for which the permissions should be retrieved
+     * @return a map containing permission nodes as keys and their corresponding
+     *         granted statuses as values; returns an empty map if no permissions
+     *         exist for the provided rank
      */
     public Map<String, Boolean> getPermissions(Rank rank) {
         Map<String, Boolean> map = permissions.get(rank);
@@ -130,18 +191,27 @@ public class PermissionManager {
     }
 
     /**
-     * Refresh permissions.
+     * Refreshes the state of the permissions system.
+     *
+     * This method reinitializes the entire permissions infrastructure
+     * by invoking the {@code initialize} method. It ensures that all
+     * ranks, permissions, and inheritance configurations are reset
+     * and updated. This operation can be used to apply changes
+     * to permissions dynamically or to restore the system to a clean state.
      */
     public void refresh() {
         initialize();
     }
 
     /**
-     * Sets permission.
+     * Sets a specific permission node with a given value for a specified rank.
+     * This method updates the current permissions of the specified rank by
+     * adding or modifying the given permission node and its value.
      *
-     * @param rank  the rank
-     * @param node  the node
-     * @param value the value
+     * @param rank  the rank for which the permission is being set
+     * @param node  the permission node to be added or updated
+     * @param value the value of the permission node; true to grant the
+     *              permission, false to revoke it
      */
     public void setPermission(Rank rank, String node, boolean value) {
         Map<String, Boolean> currentPermissions = new HashMap<>(permissions.get(rank));
@@ -150,10 +220,11 @@ public class PermissionManager {
     }
 
     /**
-     * Unset permission.
+     * Removes a specific permission node from the permissions associated with a given rank.
+     * This method updates the permission map of the specified rank by eliminating the specified node.
      *
-     * @param rank the rank
-     * @param node the node
+     * @param rank the rank from which the permission node should be removed
+     * @param node the permission node to be removed
      */
     public void unsetPermission(Rank rank, String node) {
         Map<String, Boolean> currentPermissions = new HashMap<>(this.permissions.get(rank));

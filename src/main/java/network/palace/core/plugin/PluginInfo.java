@@ -6,51 +6,61 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The interface Plugin info.
+ * The PluginInfo annotation is used to provide metadata about a plugin.
+ * This metadata includes details such as the plugin's name, version,
+ * dependencies, and reload capabilities. It is intended to be applied
+ * to plugin classes.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PluginInfo {
 
     /**
-     * Plugin name string.
+     * Returns the name of the plugin.
      *
      * @return the plugin name
      */
     String name();
 
     /**
-     * Plugin version string.
+     * Returns the version of the plugin.
      *
      * @return the plugin version
      */
     String version();
 
     /**
-     * What plugins this plugin should depend on.
+     * Returns an array of plugin names that this plugin depends on.
+     * These dependencies are required for this plugin to function correctly.
      *
-     * @return the array of plugins depended
+     * @return an array of required plugin dependencies
      */
     String[] depend();
 
     /**
-     * What plugins this plugin should soft depend on.
+     * Returns an array of plugin names that this plugin has soft dependencies on.
+     * These dependencies are not mandatory for the plugin to function but will
+     * enhance functionality if they are present.
      *
-     * @return the array of plugins soft depended
+     * @return an array of soft dependency plugin names
      */
     String[] softdepend() default {};
 
     /**
-     * Define if the plugin can be reloaded by Core.
+     * Indicates whether the plugin supports reloading without requiring a full
+     * application restart. If set to {@code true}, the plugin can handle reload
+     * events and reinitialize its state accordingly.
      *
-     * @return can this plugin be reloaded?
+     * @return {@code true} if the plugin supports reloading; {@code false} otherwise
      */
     boolean canReload() default false;
 
     /**
-     * Spigot api version string
+     * Returns the Minecraft Server API version the plugin is compatible with. This can be used to ensure
+     * compatibility with specific versions of the application or platform.
      *
-     * @return the api version
+     * @return the compatible API version as a string, or an empty string
+     * if no specific API version is declared.
      */
     String apiversion() default "";
 }
