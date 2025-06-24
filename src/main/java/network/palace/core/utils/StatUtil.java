@@ -11,8 +11,27 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
+/**
+ * Utility class for collecting and logging server statistics such as TPS (ticks per second)
+ * and online player count. Statistics are collected periodically and sent to a designated
+ * logging system.
+ *
+ * The class encapsulates the initialization of a periodic task that reports statistics,
+ * ensuring that appropriate configuration values are set and maintained.
+ */
 public class StatUtil {
 
+    /**
+     * Constructs an instance of the StatUtil class and initializes a periodic task
+     * to collect and log server statistics such as ticks per second (TPS) and online
+     * player count. The statistics are reported to a designated logging system.
+     *
+     * This constructor ensures that proper configuration values are checked and maintained
+     * before scheduling the periodic task. The timing for the task is fixed at 40 ticks
+     * for initial delay and 600 ticks for subsequent executions.
+     *
+     * @throws IOException if there is an error accessing or saving the configuration file.
+     */
     public StatUtil() throws IOException {
         FileConfiguration config = Core.getCoreConfig();
         if (!config.contains("playground")) {
@@ -51,6 +70,15 @@ public class StatUtil {
         }, 40L, 600L);
     }
 
+    /**
+     * Logs statistical data to a designated logging handler by sending a log packet.
+     * The data includes a table name and associated tags and values.
+     *
+     * @param tableName the name of the table where the log data will be stored
+     * @param tags a map of tag names to their corresponding values, providing additional metadata
+     * @param values a map of statistical data names to their corresponding values
+     * @throws IOException if an error occurs during the message handling process
+     */
     public void logStatistic(String tableName, HashMap<String, Object> tags, HashMap<String, Object> values) throws IOException {
         Core.getMessageHandler().sendMessage(new LogStatisticPacket(tableName, tags, values), Core.getMessageHandler().STATISTICS);
     }

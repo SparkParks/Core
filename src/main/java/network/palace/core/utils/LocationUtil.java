@@ -8,17 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Innectic
- * @since 5/26/2017
+ * Utility class for performing operations related to locations and blocks in a 3D coordinate space.
+ * This class provides methods to retrieve the blocks or locations that lie between two specified locations.
  */
 public class LocationUtil {
 
     /**
-     * Get the blocks between two locations
+     * Retrieves all blocks located between two specified locations in a three-dimensional space.
      *
-     * @param starting the first location
-     * @param ending the second location
-     * @return all the blocks between the two locations
+     * The method calculates the blocks in the axis-aligned cuboid defined by the two given locations,
+     * including both endpoints. The locations should exist in the same world for the method to work correctly.
+     *
+     * @param starting the starting location, defining one corner of the cuboid
+     * @param ending the ending location, defining the opposite corner of the cuboid
+     * @return an immutable list containing all blocks between the starting and ending locations
      */
     public static ImmutableList<Block> getBlocksBetween(Location starting, Location ending) {
         List<Block> blocks = new ArrayList<>();
@@ -46,11 +49,15 @@ public class LocationUtil {
     }
 
     /**
-     * Get the locations between two locations
+     * Retrieves all locations between two specified locations in a three-dimensional space.
      *
-     * @param starting the first location
-     * @param ending the ending location
-     * @return all the locations between the two locations
+     * This method calculates the locations corresponding to all the blocks in the axis-aligned cuboid
+     * defined by the two given locations, including both endpoints. The locations must exist
+     * in the same world for the method to function correctly.
+     *
+     * @param starting the starting location, defining one corner of the cuboid
+     * @param ending the ending location, defining the opposite corner of the cuboid
+     * @return an immutable list of locations between the starting and ending locations
      */
     public static ImmutableList<Location> getLocationsBetween(Location starting, Location ending) {
         return ImmutableList.copyOf((Location[]) getBlocksBetween(starting, ending).stream().map(Block::getLocation).toArray());

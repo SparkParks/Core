@@ -35,14 +35,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The type Item util.
+ * Utility class for item-related operations in a Bukkit-based Minecraft plugin.
+ *
+ * This class provides static methods to manage and manipulate items, including
+ * creating custom items, managing NBT tags, adding visual effects, and managing
+ * inventory-related JSON serialization and deserialization. It also provides event
+ * handling for inventory interactions and item drops.
+ *
+ * Fields:
+ * - UNABLE_TO_MOVE: A flag to mark an item as unable to be moved in an inventory.
+ * - UNABLE_TO_DROP: A flag to mark an item as unable to be dropped by a player.
  */
 @SuppressWarnings({"Duplicates", "deprecation"})
 public class ItemUtil implements Listener {
 
+    /**
+     * A constant string representing a tag used to mark an item as unable to be moved.
+     *
+     * This constant can be utilized in methods or logic that manage or enforce
+     * restrictions on the transfer or movement of item stacks within inventory
+     * or game contexts.
+     */
     private static final String UNABLE_TO_MOVE = "unableToMove";
+
+    /**
+     * Represents the NBT tag used to indicate that an item is restricted from being dropped.
+     *
+     * This constant is utilized within methods that modify item stack properties to enforce
+     * non-droppable behavior. Its presence in an item's NBT data ensures that the item cannot
+     * be dropped by a player under normal circumstances.
+     */
     private static final String UNABLE_TO_DROP = "unableToDrop";
 
+    /**
+     * Opens a book for the specified player by temporarily replacing the item in the main hand.
+     *
+     * @param player the player for whom the book will be opened
+     * @param book   the book item stack to be opened
+     */
     public static void openBook(CPlayer player, ItemStack book) {
         PlayerInventory i = player.getInventory();
         int slot = i.getHeldItemSlot();
@@ -64,25 +94,33 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Make unable to move item stack.
+     * Modifies the provided ItemStack to make it unable to be moved
+     * (e.g., through inventory interactions) by applying a specific NBT tag.
      *
-     * @param stack the stack
-     * @return the item stack
+     * @param stack the ItemStack to modify
+     * @return the modified ItemStack with the "unable to move" restriction applied
      */
     public static ItemStack makeUnableToMove(ItemStack stack) {
         return setNBTForItemstack(stack, UNABLE_TO_MOVE);
     }
 
     /**
-     * Make unable to drop item stack.
+     * Modifies the provided ItemStack to make it unable to be dropped by applying a specific NBT tag.
      *
-     * @param stack the stack
-     * @return the item stack
+     * @param stack the ItemStack to modify
+     * @return the modified ItemStack with the "unable to drop" restriction applied
      */
     public static ItemStack makeUnableToDrop(ItemStack stack) {
         return setNBTForItemstack(stack, UNABLE_TO_DROP);
     }
 
+    /**
+     * Modifies the provided ItemStack to remove its damage bar by making it unbreakable and
+     * hiding the unbreakable attribute from the item description.
+     *
+     * @param stack the ItemStack to modify
+     * @return the modified ItemStack with the damage bar removed
+     */
     public static ItemStack removeDamageBar(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
         meta.setUnbreakable(true);
@@ -92,10 +130,11 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Hide the damage attributes on the item stack.
+     * Modifies the provided ItemStack to hide its attribute descriptions, such as
+     * attack speed and damage, by applying the `HIDE_ATTRIBUTES` ItemFlag.
      *
-     * @param stack the stack
-     * @return the item stack
+     * @param stack the ItemStack to modify
+     * @return the modified ItemStack with hidden attributes
      */
     public static ItemStack hideAttributes(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
@@ -105,10 +144,11 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Make the specified item unbreakable and add the 'HIDE_UNBREAKABLE' flag to it
+     * Modifies the provided ItemStack to make it unbreakable and hides the unbreakable attribute
+     * from the item description.
      *
-     * @param stack the item stack
-     * @return the item with unbreakable and the 'HIDE_UNBREAKABLE' flag
+     * @param stack the ItemStack to modify
+     * @return the modified ItemStack with unbreakable attributes applied
      */
     public static ItemStack unbreakable(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
@@ -119,10 +159,11 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Enchanted the item stack and hide the enchantments.
+     * Adds a visual glow effect to the specified ItemStack by applying an enchantment
+     * and hiding the enchantment display in the item's metadata.
      *
-     * @param stack the stack
-     * @return the item stack
+     * @param stack the ItemStack to which the glow effect is added
+     * @return the modified ItemStack with the glow effect applied
      */
     public static ItemStack addGlow(ItemStack stack) {
         stack.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
@@ -132,6 +173,12 @@ public class ItemUtil implements Listener {
         return stack;
     }
 
+    /**
+     * Handles the InventoryClickEvent to prevent movement of items that have specific NBT tags.
+     * This method cancels the event if the clicked item has the "unable to move" NBT tag applied to it.
+     *
+     * @param event the InventoryClickEvent triggered when a player interacts with an inventory
+     */
     @EventHandler(priority = EventPriority.LOWEST)
     protected void onInventoryClick(InventoryClickEvent event) {
         if (event.getCurrentItem() == null) return;
@@ -140,6 +187,12 @@ public class ItemUtil implements Listener {
         }
     }
 
+    /**
+     * Handles the PlayerDropItemEvent to prevent players from dropping items that have
+     * specific NBT tags. Cancels the event if the item being dropped has the "unable to drop" NBT tag.
+     *
+     * @param event the PlayerDropItemEvent triggered when a player attempts to drop an item
+     */
     @EventHandler(priority = EventPriority.LOWEST)
     protected void onPlayerDropItem(PlayerDropItemEvent event) {
         if (event.getItemDrop() == null) return;
@@ -150,11 +203,11 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Has nbt boolean.
+     * Checks if the given ItemStack contains a specific NBT tag with the value set to 1.
      *
-     * @param stack the stack
-     * @param tag   the tag
-     * @return the boolean
+     * @param stack the ItemStack to check
+     * @param tag the name of the NBT tag to look for
+     * @return true if the ItemStack contains the specified NBT tag with a value of 1, false otherwise
      */
     public static boolean hasNBT(ItemStack stack, String tag) {
         if (stack.getType().equals(Material.AIR)) return false;
@@ -172,11 +225,13 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Sets nbt for itemstack.
+     * Sets the specified NBT tag on the provided {@link ItemStack}.
+     * Converts the item to a CraftItemStack if necessary, modifies its NBT data,
+     * and applies the changes to the item.
      *
-     * @param stack the stack
-     * @param tag   the tag
-     * @return the nbt for itemstack
+     * @param stack the {@link ItemStack} to modify
+     * @param tag the name of the NBT tag to set
+     * @return the modified {@link ItemStack} with the specified NBT tag applied
      */
     public static ItemStack setNBTForItemstack(ItemStack stack, String tag) {
         ItemStack craftStack = stack;
@@ -190,10 +245,12 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Get friendly nbt for itemstack.
+     * Generates a friendly, human-readable NBT (Named Binary Tag) representation
+     * for the given ItemStack.
      *
-     * @param stack the stack
-     * @return the nbt for itemstack
+     * @param stack the ItemStack whose NBT data is to be retrieved and formatted.
+     * @return a string representation of the NBT data for the given ItemStack.
+     *         Returns an empty string if an error occurs during processing.
      */
     public static String getFriendlyNBT(ItemStack stack) {
         Object minecraftItemstack = MinecraftReflection.getMinecraftItemStack(stack);
@@ -208,33 +265,33 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Create item stack.
+     * Creates an ItemStack of the specified material with a default quantity.
      *
-     * @param type the type
-     * @return the item stack
+     * @param type The material type of the item to create. Must not be null.
+     * @return A new ItemStack of the specified material with a quantity of 1.
      */
     public static ItemStack create(Material type) {
         return create(type, 1);
     }
 
     /**
-     * Create item stack.
+     * Creates a new ItemStack instance with the specified material and amount.
      *
-     * @param type   the type
-     * @param amount the amount
-     * @return the item stack
+     * @param type the material to be used for the ItemStack
+     * @param amount the number of items in the stack
+     * @return a new ItemStack instance with the specified material and amount
      */
     public static ItemStack create(Material type, int amount) {
         return new ItemStack(type, amount);
     }
 
     /**
-     * Create item stack.
+     * Creates an ItemStack with the specified material type, amount, and damage value.
      *
-     * @param type   the type
-     * @param amount the amount
-     * @param damage the damage
-     * @return the item stack
+     * @param type the material type of the item
+     * @param amount the amount of items in the stack
+     * @param damage the damage value to set for the item
+     * @return the created ItemStack with the specified properties
      */
     public static ItemStack create(Material type, int amount, int damage) {
         ItemStack item = create(type, amount);
@@ -246,23 +303,23 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Create item stack.
+     * Creates an {@code ItemStack} with the specified material type, display name, and an empty list of lore.
      *
-     * @param type the type
-     * @param name the name
-     * @return the item stack
+     * @param type the material type of the {@code ItemStack}
+     * @param name the display name to be applied to the {@code ItemStack}
+     * @return a newly created {@code ItemStack} with the specified type and name
      */
     public static ItemStack create(Material type, String name) {
         return create(type, name, new ArrayList<>());
     }
 
     /**
-     * Create item stack.
+     * Creates an ItemStack with the specified material type, name, and damage value.
      *
-     * @param type   the type
-     * @param name   the name
-     * @param damage the damage
-     * @return the item stack
+     * @param type the material type of the ItemStack
+     * @param name the display name of the ItemStack
+     * @param damage the damage value to set for the ItemStack
+     * @return the created ItemStack with the specified properties
      */
     public static ItemStack create(Material type, String name, int damage) {
         ItemStack item = create(type, name);
@@ -274,25 +331,26 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Create item stack.
+     * Creates an ItemStack with the specified material type, display name, and lore.
      *
-     * @param type the type
-     * @param name the name
-     * @param lore the lore
-     * @return the item stack
+     * @param type the material type of the ItemStack
+     * @param name the display name of the ItemStack
+     * @param lore the lore to be added to the ItemStack
+     * @return the created ItemStack with the specified properties
      */
     public static ItemStack create(Material type, String name, List<String> lore) {
         return create(type, 1, name, lore);
     }
 
     /**
-     * Create item stack.
+     * Creates an ItemStack with the specified type, amount, display name, and lore,
+     * while adding specific item flags to hide attributes and destruction markers.
      *
-     * @param type   the type
-     * @param amount the amount
-     * @param name   the name
-     * @param lore   the lore
-     * @return the item stack
+     * @param type the material type of the item
+     * @param amount the quantity of the item
+     * @param name the display name of the item
+     * @param lore the lore to be assigned to the item
+     * @return an ItemStack with the specified properties
      */
     public static ItemStack create(Material type, int amount, String name, List<String> lore) {
         ItemStack item = create(type, amount);
@@ -305,14 +363,14 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Create item stack.
+     * Creates an ItemStack with the specified material, amount, damage value, name, and lore.
      *
-     * @param type   the type
-     * @param amount the amount
-     * @param damage the damage
-     * @param name   the name
-     * @param lore   the lore
-     * @return the item stack
+     * @param type   the material type of the item
+     * @param amount the quantity of items in the stack
+     * @param damage the damage value or durability of the item
+     * @param name   the display name for the item
+     * @param lore   the lore (description) lines for the item
+     * @return the newly created ItemStack with the specified attributes
      */
     public static ItemStack create(Material type, int amount, int damage, String name, List<String> lore) {
         ItemStack item = create(type, amount);
@@ -327,14 +385,16 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Create colored armor
+     * Creates a leather armor ItemStack with the specified type, name, and color.
      *
-     * @param type the armor type to color
-     * @param name what to name the armor
-     * @param r    the red value
-     * @param g    the green value
-     * @param b    the blue value
-     * @return the colored armor
+     * @param type the material type of the leather armor (LEATHER_HELMET, LEATHER_CHESTPLATE,
+     *             LEATHER_LEGGINGS, or LEATHER_BOOTS)
+     * @param name the display name of the armor
+     * @param r the red component of the armor color (0-255)
+     * @param g the green component of the armor color (0-255)
+     * @param b the blue component of the armor color (0-255)
+     * @return a leather armor ItemStack with the specified properties
+     * @throws IllegalArgumentException if the provided material is not a leather armor type
      */
     public static ItemStack coloredArmor(Material type, String name, int r, int g, int b) {
         if (!type.equals(Material.LEATHER_HELMET) && !type.equals(Material.LEATHER_CHESTPLATE) &&
@@ -349,33 +409,34 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Create item stack.
+     * Creates an ItemStack object with the specified owner and default properties.
      *
-     * @param owner the owner
-     * @return the item stack
+     * @param owner the name of the owner for the created ItemStack
+     * @return a new ItemStack object associated with the provided owner
      */
     public static ItemStack create(String owner) {
         return create(owner, owner, new ArrayList<>());
     }
 
     /**
-     * Create item stack.
+     * Creates an ItemStack with the specified owner and display name.
      *
-     * @param owner       the owner
-     * @param displayName the display name
-     * @return the item stack
+     * @param owner the owner of the ItemStack
+     * @param displayName the display name of the ItemStack
+     * @return the created ItemStack with the specified owner and display name
      */
     public static ItemStack create(String owner, String displayName) {
         return create(owner, displayName, new ArrayList<>());
     }
 
     /**
-     * Create skull item stack.
+     * Creates a custom ItemStack configured as a player head with the specified owner,
+     * display name, and lore.
      *
-     * @param owner       the owner
-     * @param displayName the display name
-     * @param lore        the lore
-     * @return the item stack
+     * @param owner the owner of the skull, specified as a player's username
+     * @param displayName the custom display name to set for the ItemStack
+     * @param lore the list of strings representing the lore to be added to the ItemStack
+     * @return the customized ItemStack representing a player head
      */
     @SuppressWarnings("deprecation")
     public static ItemStack create(String owner, String displayName, List<String> lore) {
@@ -393,51 +454,52 @@ public class ItemUtil implements Listener {
      */
 
     /**
-     * Create item stack.
+     * Creates an ItemStack with the specified material type, amount, and data value.
      *
-     * @param type   the type
-     * @param amount the amount
-     * @param data   the data
-     * @return the item stack
+     * @param type the material type of the item stack
+     * @param amount the quantity of items in the stack
+     * @param data the data value of the item stack
+     * @return an ItemStack with the given properties
      */
     public static ItemStack create(Material type, int amount, byte data) {
         return new ItemStack(type, amount, data);
     }
 
     /**
-     * Create item stack.
+     * Creates a new {@code ItemStack} with the specified material type, name, and data value.
+     * This method also initializes the item with an empty list of additional metadata or properties.
      *
-     * @param type the type
-     * @param name the name
-     * @param data the data
-     * @return the item stack
+     * @param type the material type of the item
+     * @param name the display name of the item
+     * @param data the data value of the item (used for durability or additional item variations)
+     * @return a newly created {@code ItemStack} with the specified attributes
      */
     public static ItemStack create(Material type, String name, byte data) {
         return create(type, name, data, new ArrayList<>());
     }
 
     /**
-     * Create item stack
+     * Creates an ItemStack with the specified material type, display name, data value, and lore.
      *
-     * @param type the type
-     * @param name the name
-     * @param data the data
-     * @param lore the lore
-     * @return the item stack
+     * @param type the material type of the ItemStack
+     * @param name the display name of the ItemStack
+     * @param data the data value of the ItemStack
+     * @param lore the lore (additional descriptive text) for the ItemStack
+     * @return the created ItemStack with the specified properties
      */
     public static ItemStack create(Material type, String name, byte data, List<String> lore) {
         return create(type, 1, data, name, lore);
     }
 
     /**
-     * Create item stack.
+     * Creates an ItemStack with the specified type, amount, data, display name, and lore.
      *
-     * @param type   the type
-     * @param amount the amount
-     * @param data   the data
-     * @param name   the name
-     * @param lore   the lore
-     * @return the item stack
+     * @param type  the material type of the item
+     * @param amount  the quantity of the item
+     * @param data  the data value of the item
+     * @param name  the display name of the item
+     * @param lore  the lore (description) of the item
+     * @return a customized ItemStack with the specified properties
      */
     public static ItemStack create(Material type, int amount, byte data, String name, List<String> lore) {
         ItemStack item = create(type, amount, data);
@@ -448,7 +510,13 @@ public class ItemUtil implements Listener {
         return item;
     }
 
-
+    /**
+     * Converts an {@link ItemStack} object into a {@link JsonObject} containing its properties.
+     *
+     * @param i the {@link ItemStack} to be converted into JSON format. Can be null.
+     * @return a {@link JsonObject} representing the {@link ItemStack}'s properties.
+     *         Returns an empty JSON object if the input {@link ItemStack} is null.
+     */
     public static JsonObject getJsonFromItem(ItemStack i) {
         JsonObject o = new JsonObject();
         if (i == null) {
@@ -465,6 +533,14 @@ public class ItemUtil implements Listener {
         return o;
     }
 
+    /**
+     * Converts a JSON string into an ItemStack.
+     * The JSON string should contain specific keys representing item attributes such as type, amount, durability, data, and tags.
+     * If the JSON string does not specify the required item type, an ItemStack of Material.AIR is returned.
+     *
+     * @param json the JSON string representing the item configuration
+     * @return an ItemStack object created based on the JSON data, or Material.AIR if the type is not specified or an error occurs during processing
+     */
     public static ItemStack getItemFromJson(String json) {
         JsonObject o = new JsonParser().parse(json).getAsJsonObject();
         if (!o.has("t")) {
@@ -489,10 +565,22 @@ public class ItemUtil implements Listener {
         return i;
     }
 
+    /**
+     * Converts the contents of the provided inventory into a JSON array.
+     *
+     * @param inv the Inventory object whose contents are to be converted to JSON
+     * @return a JsonArray representing the inventory contents
+     */
     public static JsonArray getJsonFromInventory(Inventory inv) {
         return getJsonFromArray(inv.getContents());
     }
 
+    /**
+     * Converts an array of ItemStack objects into a JsonArray.
+     *
+     * @param arr the array of ItemStack objects to be converted
+     * @return a JsonArray representation of the given ItemStack array
+     */
     public static JsonArray getJsonFromArray(ItemStack[] arr) {
         JsonArray a = new JsonArray();
         for (ItemStack i : arr) {
@@ -501,6 +589,14 @@ public class ItemUtil implements Listener {
         return a;
     }
 
+    /**
+     * Parses a JSON string representing an inventory and converts it into an array of ItemStack objects.
+     * The JSON string is expected to be an array of serialized item data.
+     *
+     * @param json the JSON string representing the inventory, where each element describes an item
+     * @return an array of ItemStack objects parsed from the JSON string.
+     *         Returns an empty array if the input is not a valid JSON array.
+     */
     public static ItemStack[] getInventoryFromJson(String json) {
         JsonElement e = new JsonParser().parse(json);
         if (!e.isJsonArray()) {
@@ -525,6 +621,15 @@ public class ItemUtil implements Listener {
     NEW METHODS START
      */
 
+    /**
+     * Converts the provided ItemStack into a JsonObject representation containing
+     * key properties and data from the item.
+     *
+     * @param i the ItemStack to be converted. Can be null or an ItemStack of type AIR,
+     *          in which case an empty JsonObject is returned.
+     * @return a JsonObject representation of the provided ItemStack, including properties
+     *         such as type, data, amount, and tag (if present).
+     */
     public static JsonObject getJsonFromItemNew(ItemStack i) {
         JsonObject o = new JsonObject();
         if (i == null || i.getType().equals(Material.AIR)) {
@@ -543,6 +648,16 @@ public class ItemUtil implements Listener {
         return o;
     }
 
+    /**
+     * Converts a JSON string into an ItemStack instance. The JSON data should include the
+     * item's type, amount, and optional metadata such as durability and NBT tags.
+     *
+     * @param json the JSON string containing item properties; must define "type" as a
+     *             primary attribute. Additional attributes may include "data", "amount",
+     *             and "tag".
+     * @return an ItemStack object created from the JSON data, or an ItemStack of type
+     *         Material.AIR if the input is invalid or an error occurs during parsing.
+     */
     public static ItemStack getItemFromJsonNew(String json) {
         JsonObject o = new JsonParser().parse(json).getAsJsonObject();
         if (!o.has("type")) {
@@ -567,10 +682,22 @@ public class ItemUtil implements Listener {
         return i;
     }
 
+    /**
+     * Converts the contents of the given inventory into a JSON array.
+     *
+     * @param inv the inventory whose contents need to be converted to JSON
+     * @return a JsonArray representing the inventory contents
+     */
     public static JsonArray getJsonFromInventoryNew(Inventory inv) {
         return getJsonFromArrayNew(inv.getContents());
     }
 
+    /**
+     * Converts an array of ItemStack objects into a JsonArray.
+     *
+     * @param arr the array of ItemStack objects to be converted
+     * @return a JsonArray representing the converted ItemStack objects
+     */
     public static JsonArray getJsonFromArrayNew(ItemStack[] arr) {
         JsonArray a = new JsonArray();
         for (ItemStack i : arr) {
@@ -579,6 +706,12 @@ public class ItemUtil implements Listener {
         return a;
     }
 
+    /**
+     * Converts a JSON string representation of an inventory into an array of ItemStack objects.
+     *
+     * @param json the JSON string representing the inventory, expected to be a JSON array
+     * @return an array of ItemStack objects parsed from the JSON array; returns an empty array if the input is not valid
+     */
     public static ItemStack[] getInventoryFromJsonNew(String json) {
         JsonElement e = new JsonParser().parse(json);
         if (!e.isJsonArray()) {

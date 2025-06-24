@@ -14,9 +14,26 @@ import java.util.HashMap;
 import java.util.Locale;
 
 /**
- * The type Misc util.
+ * Utility class providing miscellaneous helper methods for common operations such as string manipulation,
+ * numeric checks, JSON handling, and more.
  */
 public class MiscUtil {
+    /**
+     * A static map that defines directional yaw values for each cardinal direction.
+     *
+     * This map associates cardinal directions represented by {@link BlockFace} with
+     * corresponding yaw angles (in degrees). Yaw angles are used to represent the
+     * rotational orientation of an object in a virtual 3D space.
+     *
+     * Mappings:
+     * - {@code BlockFace.NORTH} -> 180F
+     * - {@code BlockFace.EAST}  -> -90F
+     * - {@code BlockFace.SOUTH} -> 0F
+     * - {@code BlockFace.WEST}  -> 90F
+     *
+     * This structure is useful for operations needing a quick directional-to-yaw
+     * angle mapping, such as handling rotations or orientations in game worlds.
+     */
     public static final HashMap<BlockFace, Float> DIRECTIONAL_YAW = new HashMap<BlockFace, Float>() {{
         put(BlockFace.NORTH, 180F);
         put(BlockFace.EAST, -90F);
@@ -25,10 +42,10 @@ public class MiscUtil {
     }};
 
     /**
-     * Check if is integer.
+     * Checks if the given string can be parsed as an integer.
      *
-     * @param toCheck the string to check
-     * @return if is integer
+     * @param toCheck the string to check for integer compatibility
+     * @return true if the string can be parsed as an integer; false otherwise
      */
     public static boolean checkIfInt(String toCheck) {
         try {
@@ -40,10 +57,10 @@ public class MiscUtil {
     }
 
     /**
-     * Check if something is a float
+     * Checks if the given string can be parsed as a float.
      *
-     * @param toCheck the string to check
-     * @return if it's a float
+     * @param toCheck the string to check for float compatibility
+     * @return true if the string can be parsed as a float; false otherwise
      */
     public static boolean checkIfFloat(String toCheck) {
         try {
@@ -55,10 +72,10 @@ public class MiscUtil {
     }
 
     /**
-     * Check if something is a double
+     * Checks if the given string can be parsed as a double.
      *
-     * @param toCheck the string to check
-     * @return if it's a double
+     * @param toCheck the string to check for double compatibility
+     * @return true if the string can be parsed as a double; false otherwise
      */
     public static boolean checkIfDouble(String toCheck) {
         try {
@@ -70,25 +87,35 @@ public class MiscUtil {
     }
 
     /**
-     * Capitalize first letter of a string.
+     * Capitalizes the first letter of the given string.
      *
-     * @param input the input
-     * @return the string
+     * @param input the string whose first letter needs to be capitalized
+     * @return a new string with the first letter capitalized. If the input is null or empty, behavior may be undefined.
      */
     public static String capitalizeFirstLetter(String input) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 
     /**
-     * Add commas to a number to format it properly
+     * Formats the given integer into a locale-specific string representation.
+     * The formatting follows U.S. locale standards, including the use of commas
+     * as thousands separators.
      *
-     * @param i the number to format
-     * @return the number with commas
+     * @param i the integer to format
+     * @return a string representation of the formatted integer
      */
     public static String formatNumber(int i) {
         return NumberFormat.getNumberInstance(Locale.US).format(i);
     }
 
+    /**
+     * Checks whether a specified element exists within an array.
+     *
+     * @param <T> the type of elements in the array
+     * @param ts the array to check for the presence of the element; can be null
+     * @param t the element to search for in the array; can be null
+     * @return true if the element is found in the array; false otherwise
+     */
     public static <T> boolean contains(T[] ts, T t) {
         if (t == null || ts == null) return false;
         for (T t1 : ts) {
@@ -99,10 +126,16 @@ public class MiscUtil {
     }
 
     /**
-     * Parse the contents of a URL and return JSON objects
+     * Reads a JSON object from the specified URL.
      *
-     * @param url the url
-     * @return JSON objects with the content of the URL
+     * This method performs a network request to fetch the JSON data from the given URL,
+     * parses the JSON, and returns it as a JsonObject. If an error occurs during the
+     * operation, such as a network issue or invalid JSON, the method will
+     * return null and print the stack trace of the exception.
+     *
+     * @param url the URL pointing to the JSON resource to be read
+     * @return a JsonObject representing the JSON data retrieved from the given URL,
+     *         or null if an error occurs during the retrieval or parsing process
      */
     public static JsonObject readJsonFromUrl(String url) {
         try (InputStream is = new URL(url).openStream()) {
@@ -117,11 +150,11 @@ public class MiscUtil {
     }
 
     /**
-     * Read all data from a buffer and output a string
+     * Reads all characters from the given Reader and returns them as a single String.
      *
-     * @param rd the reader
-     * @return a string
-     * @throws IOException in case of an error while reading the buffer
+     * @param rd the Reader from which characters are to be read
+     * @return a String containing all the characters read from the Reader
+     * @throws IOException if an I/O error occurs while reading from the Reader
      */
     public static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -133,10 +166,15 @@ public class MiscUtil {
     }
 
     /**
-     * Get a location from a JsonObject
+     * Constructs a Location object based on the data provided in the given JsonObject.
+     * The JsonObject should contain the following keys with appropriate data types:
+     * "world" (String), "x" (double), "y" (double), "z" (double), "yaw" (float), and "pitch" (float).
      *
-     * @param object the JsonObject
-     * @return a Location
+     * If the JsonObject is null, the method will return null.
+     *
+     * @param object the JsonObject containing location data; can be null
+     * @return a Location object representing the specified coordinates and world,
+     *         or null if the input JsonObject is null
      */
     public static Location getLocation(JsonObject object) {
         if (object == null) return null;
@@ -145,10 +183,12 @@ public class MiscUtil {
     }
 
     /**
-     * Store a location in a JsonObject
+     * Converts a Location object into a JsonObject representation. The resulting
+     * JsonObject contains the following keys: "x", "y", "z", "yaw", "pitch", and "world".
+     * If the provided Location object is null, an empty JsonObject is returned.
      *
-     * @param location the location to store
-     * @return a JsonObject with the location data, or an empty object if location is null
+     * @param location the Location object to be converted to a JsonObject; can be null
+     * @return a JsonObject containing the data from the Location object, or an empty JsonObject if the input is null
      */
     public static JsonObject getJson(Location location) {
         JsonObject object = new JsonObject();

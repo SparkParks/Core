@@ -13,36 +13,37 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.UUID;
 
 /**
- * The type Head util.
+ * Utility class for creating and manipulating player skulls or heads in the game.
+ * Provides methods to generate player heads based on skin textures and custom display names.
  */
 public class HeadUtil {
 
     /**
-     * Get a player skull ItemStack with texture of player's skin
+     * Generates a player head ItemStack based on the texture value associated with the given player.
      *
-     * @param player player
-     * @return ItemStack player head
+     * @param player the CPlayer object representing the player whose head texture is to be used
+     * @return an ItemStack representing the player's head based on their texture
      */
     public static ItemStack getPlayerHead(CPlayer player) {
         return getPlayerHead(player.getTextureValue());
     }
 
     /**
-     * Get a player skull ItemStack from a texture hash
+     * Generates a player head ItemStack based on the provided texture hash.
      *
-     * @param hash hash
-     * @return ItemStack player head
+     * @param hash the texture hash used to create the player's head
+     * @return an ItemStack representing the player's head
      */
     public static ItemStack getPlayerHead(String hash) {
         return getPlayerHead(hash, "Head");
     }
 
     /**
-     * Get a player skull ItemStack with a custom name from a texture hash
+     * Generates a player head ItemStack based on the provided texture hash and custom display name.
      *
-     * @param hash    hash
-     * @param display display
-     * @return ItemStack player head
+     * @param hash the texture hash used to define the player's head skin
+     * @param display the display name to be set for the player's head
+     * @return an ItemStack representing the player's head with the specified display name
      */
     public static ItemStack getPlayerHead(String hash, String display) {
         ItemStack head = getHead(hash);
@@ -53,10 +54,11 @@ public class HeadUtil {
     }
 
     /**
-     * Get a player skull ItemStack from a texture hash
+     * Generates an ItemStack representing a player head with a skin texture based on the provided texture hash.
+     * The texture is applied using NBT data, and a unique UUID is assigned to the head.
      *
-     * @param hash hash
-     * @return ItemStack player head
+     * @param hash the texture hash used to define the skin of the player head
+     * @return an ItemStack object representing the player head with the specified texture
      */
     private static ItemStack getHead(String hash) {
         ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
