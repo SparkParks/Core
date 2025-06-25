@@ -32,17 +32,18 @@ import java.util.UUID;
  * to manipulate player data, control player interactions, manage inventory,
  * and handle various in-game attributes.
  *
- * The CPlayer class enables developers to work with both player-specific
+ * <p>The CPlayer class enables developers to work with both player-specific
  * features (such as health, food level, equipment, gamemode, etc.) and
- * interactions (like teleportation, messaging, visibility, etc.).
+ * interactions (like teleportation, messaging, visibility, etc.).</p>
  *
  * Key functionalities include:
- * - Managing player health, food level, fire ticks, and attributes.
- * - Handling inventory items, equipment slots, and updates.
- * - Controlling player permissions, gamemodes, teleportation, and visibility.
- * - Interacting with action bars, boss bars, and achievement systems.
- * - Sending formatted messages and personalizing player display names.
- *
+ * <ul>
+ *     <li>Managing player health, food level, fire ticks, and attributes.</li>
+ *     <li>Handling inventory items, equipment slots, and updates.</li>
+ *     <li>Controlling player permissions, gamemodes, teleportation, and visibility.</li>
+ *     <li>Interacting with action bars, boss bars, and achievement systems.</li>
+ *     <li>Sending formatted messages and personalizing player display names.</li>
+ * </ul>
  * This class facilitates player-related tasks within plugins and game management systems.
  */
 public interface CPlayer {
