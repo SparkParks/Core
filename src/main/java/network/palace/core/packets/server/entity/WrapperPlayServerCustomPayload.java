@@ -25,52 +25,96 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.palace.core.packets.AbstractPacket;
 
+/**
+ * A wrapper class for the Minecraft server packet Play.Server.CUSTOM_PAYLOAD.
+ * This packet is used to send custom plugin messages between the client and server via specified channels.
+ * It encapsulates the functionality for managing the custom channel and payload data.
+ */
 public class WrapperPlayServerCustomPayload extends AbstractPacket {
 
+    /**
+     * Represents the packet type {@code PacketType.Play.Server.CUSTOM_PAYLOAD}.
+     * This constant is used to identify the specific packet type that handles
+     * custom plugin messages sent between the server and client via specified channels.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.CUSTOM_PAYLOAD;
 
+    /**
+     * Constructs a new wrapper for the Play.Server.CUSTOM_PAYLOAD packet type.
+     * This packet type is used to send custom plugin messages between the server
+     * and client via specified channels.
+     *
+     * Initializes the packet with its associated data and assigns default values
+     * to the packet's modifiers.
+     *
+     * The packet type associated with this wrapper is {@code PacketType.Play.Server.CUSTOM_PAYLOAD}.
+     *
+     * Throws an IllegalArgumentException if the packet type does not match the
+     * expected type or if the packet container is null.
+     */
     public WrapperPlayServerCustomPayload() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
+    /**
+     * Constructs a new wrapper for the Play.Server.CUSTOM_PAYLOAD packet type.
+     * This packet type is used to send custom plugin messages between the server
+     * and client via specified channels.
+     *
+     * Initializes the packet with its associated data and assigns default values
+     * to the packet's modifiers.
+     *
+     * The packet type associated with this wrapper is {@code PacketType.Play.Server.CUSTOM_PAYLOAD}.
+     *
+     * @param packet The packet container containing the necessary packet data. This
+     *               must not be null and must match the PacketType.Play.Server.CUSTOM_PAYLOAD.
+     * @throws IllegalArgumentException if the packet container is null or the packet
+     *                                  type does not match the expected type.
+     */
     public WrapperPlayServerCustomPayload(PacketContainer packet) {
         super(packet, TYPE);
     }
 
     /**
-     * Retrieve Channel.
-     * <p>
-     * Notes: name of the "channel" used to send the data.
+     * Retrieves the channel associated with the custom payload packet.
+     * This channel is used for communication between the server and client
+     * for plugin messages.
      *
-     * @return The current Channel
+     * @return The name of the channel as a string.
      */
     public String getChannel() {
         return handle.getStrings().read(0);
     }
 
     /**
-     * Set Channel.
+     * Sets the channel for the custom payload packet. The channel is used to
+     * specify the communication path between the server and client for plugin messages.
      *
-     * @param value - new value.
+     * @param value The name of the channel as a string.
      */
     public void setChannel(String value) {
         handle.getStrings().write(0, value);
     }
 
     /**
-     * Retrieve payload contents as a raw Netty buffer
+     * Retrieves the contents buffer of the custom payload packet.
+     * The contents are represented as a ByteBuf, allowing direct manipulation
+     * of the packet's data buffer used for custom plugin messaging between
+     * the server and client.
      *
-     * @return Payload contents as a Netty buffer
+     * @return The contents of the custom payload packet as a {@code ByteBuf}.
      */
     public ByteBuf getContentsBuffer() {
         return (ByteBuf) handle.getModifier().withType(ByteBuf.class).read(0);
     }
 
     /**
-     * Retrieve payload contents
+     * Retrieves the contents of the custom payload packet.
+     * The contents are extracted from the internal buffer and returned
+     * as a byte array.
      *
-     * @return Payload contents as a byte array
+     * @return A byte array containing the contents of the custom payload packet.
      */
     public byte[] getContents() {
         ByteBuf buffer = getContentsBuffer();
@@ -80,9 +124,11 @@ public class WrapperPlayServerCustomPayload extends AbstractPacket {
     }
 
     /**
-     * Update payload contents with a Netty buffer
+     * Updates the contents buffer of the custom payload packet. The contents are
+     * represented as a {@code ByteBuf}, enabling direct manipulation of the packet's
+     * data buffer used for custom plugin messaging between the server and client.
      *
-     * @param contents - new payload content
+     * @param contents the new contents to set for the custom payload packet as a {@code ByteBuf}.
      */
     public void setContentsBuffer(ByteBuf contents) {
         if (MinecraftReflection.is(MinecraftReflection.getPacketDataSerializerClass(), contents)) {
@@ -94,9 +140,11 @@ public class WrapperPlayServerCustomPayload extends AbstractPacket {
     }
 
     /**
-     * Update payload contents with a byte array
+     * Sets the contents of the custom payload packet.
+     * The contents are provided as a byte array and are converted into a buffer
+     * that is used to update the packet's internal data.
      *
-     * @param content - new payload content
+     * @param content the new contents to set for the custom payload packet as a byte array.
      */
     public void setContents(byte[] content) {
         setContentsBuffer(Unpooled.copiedBuffer(content));

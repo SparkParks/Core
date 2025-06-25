@@ -24,17 +24,30 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 /**
- * The type Wrapper play server player list header footer.
+ * Wrapper class for the Play.Server.PLAYER_LIST_HEADER_FOOTER packet.
+ * This class is used to handle packets related to the player list's header and footer
+ * in the server, allowing for the retrieval and modification of these fields.
  */
 public class WrapperPlayServerPlayerListHeaderFooter extends AbstractPacket {
 
     /**
-     * The constant TYPE.
+     * Represents the {@link PacketType} for the Play.Server.PLAYER_LIST_HEADER_FOOTER packet.
+     * This constant is used to specify the type of packet that modifies the header and footer
+     * of the player list displayed on the server.
      */
     public static final PacketType TYPE = PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER;
 
     /**
-     * Instantiates a new Wrapper play server player list header footer.
+     * Constructs a new instance of the WrapperPlayServerPlayerListHeaderFooter packet wrapper.
+     * This constructor initializes the packet with default values and sets up the structure
+     * for managing the player list's header and footer.
+     *
+     * The packet is associated with the Play.Server.PLAYER_LIST_HEADER_FOOTER type, which allows
+     * changes to the header and footer displayed in the player list on the server.
+     *
+     * This constructor provides a clean slate for manipulating the packet contents and should
+     * generally be used when intending to send or modify header and footer information
+     * for players.
      */
     public WrapperPlayServerPlayerListHeaderFooter() {
         super(new PacketContainer(TYPE), TYPE);
@@ -42,36 +55,36 @@ public class WrapperPlayServerPlayerListHeaderFooter extends AbstractPacket {
     }
 
     /**
-     * Retrieve Header.
+     * Retrieves the current header of the player list in the associated packet.
      *
-     * @return The current Header
+     * @return The current header, represented as a {@link WrappedChatComponent}.
      */
     public WrappedChatComponent getHeader() {
         return handle.getChatComponents().read(0);
     }
 
     /**
-     * Set Header.
+     * Sets the header of the player list in the associated packet.
      *
-     * @param value - new value.
+     * @param value the new header, represented as a {@link WrappedChatComponent}.
      */
     public void setHeader(WrappedChatComponent value) {
         handle.getChatComponents().write(0, value);
     }
 
     /**
-     * Retrieve Footer.
+     * Retrieves the current footer of the player list in the associated packet.
      *
-     * @return The current Footer
+     * @return The current footer, represented as a {@link WrappedChatComponent}.
      */
     public WrappedChatComponent getFooter() {
         return handle.getChatComponents().read(1);
     }
 
     /**
-     * Set Footer.
+     * Sets the footer of the player list in the associated packet.
      *
-     * @param value - new value.
+     * @param value the new footer, represented as a {@link WrappedChatComponent}.
      */
     public void setFooter(WrappedChatComponent value) {
         handle.getChatComponents().write(1, value);

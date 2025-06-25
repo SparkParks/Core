@@ -26,50 +26,72 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
+/**
+ * Represents a wrapper for the Play.Server.ENTITY packet in Minecraft.
+ * This class provides methods to manipulate and access packet data such as
+ * the associated entity's ID and entity object within the context of a server world or event.
+ */
 public class WrapperPlayServerEntity extends AbstractPacket {
 
+    /**
+     * Represents the packet type {@code PacketType.Play.Server.ENTITY}.
+     * This constant is used to identify packets related to entity-based events
+     * in the Play.Server protocol.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.ENTITY;
 
+    /**
+     * Constructs a new wrapper for the Play.Server.ENTITY packet type.
+     * This wrapper is used to handle and modify packets related to entities
+     * in the server.
+     *
+     * Initializes the packet with its associated data and assigns default values
+     * to the packet's modifiers.
+     *
+     * The packet type associated with this wrapper is {@code PacketType.Play.Server.ENTITY}.
+     *
+     * Throws an IllegalArgumentException if the packet type does not match
+     * the expected type or if the packet container is null.
+     */
     public WrapperPlayServerEntity() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
     /**
-     * Retrieve Entity ID.
-     * <p>
-     * Notes: entity's ID
+     * Retrieves the ID of the entity associated with this packet.
      *
-     * @return The current Entity ID
+     * @return The ID of the entity as an integer.
      */
     public int getEntityID() {
         return handle.getIntegers().read(0);
     }
 
     /**
-     * Set Entity ID.
+     * Sets the ID of the entity associated with this packet.
      *
-     * @param value - new value.
+     * @param value the new entity ID to be set.
      */
     public void setEntityID(int value) {
         handle.getIntegers().write(0, value);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieves the entity associated with this packet in the specified world.
      *
-     * @param world - the current world of the entity.
-     * @return The spawned entity.
+     * @param world the world in which the entity exists.
+     * @return The entity associated with this packet, or null if the entity could not be found.
      */
     public Entity getEntity(World world) {
         return handle.getEntityModifier(world).read(0);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieves the entity associated with this packet in the world of the player
+     * involved in the specified packet event.
      *
-     * @param event - the packet event.
-     * @return The spawned entity.
+     * @param event the packet event containing the player and world information.
+     * @return The entity associated with this packet, or null if the entity could not be found.
      */
     public Entity getEntity(PacketEvent event) {
         return getEntity(event.getPlayer().getWorld());

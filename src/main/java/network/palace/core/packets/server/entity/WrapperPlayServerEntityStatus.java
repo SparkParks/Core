@@ -26,70 +26,90 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
+/**
+ * Represents a wrapper for the "Play.Server.ENTITY_STATUS" packet in Minecraft.
+ * This packet is used to update the status of an entity for a player.
+ * Provides methods for reading and modifying the entity ID and status within the packet.
+ */
 public class WrapperPlayServerEntityStatus extends AbstractPacket {
 
+    /**
+     * Represents the packet type Play.Server.ENTITY_STATUS in the Minecraft protocol.
+     * This packet type is utilized to update the status of an entity for a player.
+     * It serves as a unique identifier for packets related to entity status updates.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.ENTITY_STATUS;
 
+    /**
+     * Constructs a new wrapper for the Play.Server.ENTITY_STATUS packet type.
+     * This wrapper is used for handling and modifying packets that are sent by the server
+     * to update the status of an entity for a player.
+     *
+     * Initializes the packet with its associated type and assigns default values
+     * to the packet's modifiers.
+     *
+     * The packet type associated with this wrapper is {@code PacketType.Play.Server.ENTITY_STATUS}.
+     *
+     * Throws an IllegalArgumentException if the packet type does not match
+     * the expected type or if the packet container is null.
+     */
     public WrapperPlayServerEntityStatus() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
     /**
-     * Retrieve Entity ID.
-     * <p>
-     * Notes: entity's ID
+     * Retrieves the ID of the entity associated with this packet.
      *
-     * @return The current Entity ID
+     * @return The ID of the entity as an integer.
      */
     public int getEntityID() {
         return handle.getIntegers().read(0);
     }
 
     /**
-     * Set Entity ID.
+     * Sets the ID of the entity associated with this packet.
      *
-     * @param value - new value.
+     * @param value The new entity ID to be set.
      */
     public void setEntityID(int value) {
         handle.getIntegers().write(0, value);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieves the entity associated with the given world.
      *
-     * @param world - the current world of the entity.
-     * @return The spawned entity.
+     * @param world the world in which the entity exists.
+     * @return The entity associated with the specified world, or null if the entity could not be found.
      */
     public Entity getEntity(World world) {
         return handle.getEntityModifier(world).read(0);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieves the entity associated with the packet event.
      *
-     * @param event - the packet event.
-     * @return The spawned entity.
+     * @param event the packet event containing the player and world information.
+     * @return The entity associated with the specified packet event's world, or null if the entity could not be found.
      */
     public Entity getEntity(PacketEvent event) {
         return getEntity(event.getPlayer().getWorld());
     }
 
     /**
-     * Retrieve Entity Status.
-     * <p>
-     * Notes: see below
+     * Retrieves the status of the entity associated with this packet.
      *
-     * @return The current Entity Status
+     * @return The status of the entity as a byte.
      */
     public byte getEntityStatus() {
         return handle.getBytes().read(0);
     }
 
     /**
-     * Set Entity Status.
+     * Sets the status of the entity associated with the packet.
      *
-     * @param value - new value.
+     * @param value The new status value to be set for the entity. This value is interpreted
+     *              as a byte by the protocol to represent different entity states or events.
      */
     public void setEntityStatus(int value) {
         handle.getBytes().write(0, (byte) value);

@@ -26,10 +26,24 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
+/**
+ * Represents a packet wrapper for the server-side "animation" packet.
+ * This packet is used to play animations for entities in the game.
+ */
 public class WrapperPlayServerAnimation extends AbstractPacket {
 
+    /**
+     * Represents the packet type for the server-side "animation" packet.
+     * This constant is used to identify the specific type of the animation packet
+     * within the ProtocolLib packet handling framework.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.ANIMATION;
 
+    /**
+     * Constructs a new instance of the WrapperPlayServerAnimation.
+     * This class represents a server-side "animation" packet wrapper used in the ProtocolLib framework,
+     * enabling interactions with entity animations.
+     */
     public WrapperPlayServerAnimation() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
@@ -37,39 +51,42 @@ public class WrapperPlayServerAnimation extends AbstractPacket {
 
     /**
      * Retrieve Entity ID.
-     * <p>
-     * Notes: entity's ID
      *
-     * @return The current Entity ID
+     * Notes: entity's ID.
+     *
+     * @return The current Entity ID.
      */
     public int getEntityID() {
         return handle.getIntegers().read(0);
     }
 
     /**
-     * Set Entity ID.
+     * Set the Entity ID.
      *
-     * @param value - new value.
+     * Updates the entity ID associated with the packet. This is typically used to specify
+     * or modify which entity the packet is referring to.
+     *
+     * @param value The new entity ID to set.
      */
     public void setEntityID(int value) {
         handle.getIntegers().write(0, value);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieve the entity referenced by this packet for the provided world.
      *
-     * @param world - the current world of the entity.
-     * @return The spawned entity.
+     * @param world The world in which the entity resides.
+     * @return The entity associated with this packet in the specified world.
      */
     public Entity getEntity(World world) {
         return handle.getEntityModifier(world).read(0);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieve the entity referenced by this packet for the world associated with the given packet event.
      *
-     * @param event - the packet event.
-     * @return The spawned entity.
+     * @param event The packet event containing the player and the world in which the entity resides.
+     * @return The entity associated with this packet in the world referenced by the event.
      */
     public Entity getEntity(PacketEvent event) {
         return getEntity(event.getPlayer().getWorld());
@@ -77,19 +94,21 @@ public class WrapperPlayServerAnimation extends AbstractPacket {
 
     /**
      * Retrieve Animation.
-     * <p>
-     * Notes: animation ID
      *
-     * @return The current Animation
+     * Extracts the animation ID from the packet, which represents
+     * the specific animation played for an entity.
+     *
+     * @return The ID of the animation.
      */
     public int getAnimation() {
         return handle.getIntegers().read(1);
     }
 
     /**
-     * Set Animation.
+     * Sets the animation ID associated with the animation packet.
+     * The animation ID determines which specific animation is played for an entity.
      *
-     * @param value - new value.
+     * @param value The ID of the animation to set.
      */
     public void setAnimation(int value) {
         handle.getIntegers().write(1, value);

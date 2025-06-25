@@ -26,34 +26,76 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
+/**
+ * Represents a wrapper for the Minecraft server packet responsible
+ * for handling block actions. This packet notifies the client of
+ * specific block interactions or state changes.
+ *
+ * This wrapper is designed to simplify accessing and modifying the
+ * data contained within the packet, including block location, type,
+ * action id, and action parameters. The underlying packet type is
+ * {@code PacketType.Play.Server.BLOCK_ACTION}.
+ */
 public class WrapperPlayServerBlockAction extends AbstractPacket {
 
+    /**
+     * Specifies the packet type for handling server-side block actions in the game.
+     * This constant represents the packet {@code PacketType.Play.Server.BLOCK_ACTION},
+     * which is used to notify clients about interactions or updates to blocks.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.BLOCK_ACTION;
 
+    /**
+     * Constructs a new wrapper instance for the Minecraft server packet
+     * {@code PacketType.Play.Server.BLOCK_ACTION}. This packet is used to notify
+     * the client about actions or state changes occurring on specific blocks,
+     * such as pistons, chests, or note blocks.
+     *
+     * Upon initialization, this constructor sets up the packet container with
+     * the default modifications necessary for handling this packet type.
+     *
+     * The wrapper serves as an abstraction for simplifying interactions with the
+     * raw packet data, enabling easier modification and retrieval of fields
+     * like block location, type, action ID, and parameters.
+     *
+     * @throws IllegalArgumentException if the packet container is not correctly initialized
+     *                                  or does not match the expected packet type.
+     */
     public WrapperPlayServerBlockAction() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
+    /**
+     * Constructs a new instance of the wrapper for the packet
+     * {@code PacketType.Play.Server.BLOCK_ACTION}. This constructor initializes
+     * the packet wrapper with the provided {@link PacketContainer}.
+     *
+     * @param packet the {@link PacketContainer} containing the raw packet data
+     *               to be wrapped. Must not be null and must match the expected
+     *               packet type for block action events.
+     * @throws IllegalArgumentException if the packet container is null, not properly
+     *                                  initialized, or does not match the expected packet type.
+     */
     public WrapperPlayServerBlockAction(PacketContainer packet) {
         super(packet, TYPE);
     }
 
     /**
-     * Retrieve Location.
-     * <p>
-     * Notes: block Coordinates
+     * Retrieves the block position associated with this packet.
      *
-     * @return The current Location
+     * @return The current block position as a {@link BlockPosition}.
      */
     public BlockPosition getLocation() {
         return handle.getBlockPositionModifier().read(0);
     }
 
     /**
-     * Set Location.
+     * Sets the location of the block that this packet is referring to.
+     * This method takes a Block object and updates the underlying packet
+     * data with the block's coordinates.
      *
-     * @param block - block value.
+     * @param block The block whose location is to be set. Must not be null.
      */
     public void setLocation(Block block) {
         Location location = block.getLocation();
@@ -61,60 +103,69 @@ public class WrapperPlayServerBlockAction extends AbstractPacket {
     }
 
     /**
-     * Retrieve Action ID.
-     * <p>
-     * Notes: varies depending on block - see Block_Actions
+     * Retrieves the action ID associated with this packet.
+     * The action ID indicates the specific action or state change
+     * related to the block specified in the packet.
      *
-     * @return The current Byte 1
+     * @return The current action ID as an integer.
      */
     public int getActionID() {
         return handle.getIntegers().read(0);
     }
 
     /**
-     * Set Action ID.
+     * Sets the action ID for the block action packet. The action ID specifies the type of
+     * action or state change associated with the block referred to in the packet.
      *
-     * @param value - new value.
+     * @param value The action ID to be set. Must be a valid integer corresponding to the
+     *              specific block action or state change.
      */
     public void setActionID(int value) {
         handle.getIntegers().write(0, value);
     }
 
     /**
-     * Retrieve Action Param.
-     * <p>
-     * Notes: varies depending on block - see Block_Actions
+     * Retrieves the action parameter associated with this packet.
+     * The action parameter provides additional data or context for the action
+     * specified by the action ID, relating to the block in question.
      *
-     * @return The current Byte 2
+     * @return The current action parameter as an integer.
      */
     public int getActionParam() {
         return handle.getIntegers().read(1);
     }
 
     /**
-     * Set Action Param.
+     * Sets the action parameter for the block action packet. The action parameter
+     * provides additional context or information related to the block action
+     * specified by the action ID.
      *
-     * @param value - new value.
+     * @param value the action parameter to be set. Must be an integer corresponding
+     *              to the specific block action or state.
      */
     public void setActionParam(int value) {
         handle.getIntegers().write(1, value);
     }
 
     /**
-     * Retrieve Block Type.
-     * <p>
-     * Notes: the block type for the block
+     * Retrieves the type of block associated with this packet.
      *
-     * @return The current Block Type
+     * This method provides the block type information, represented by the {@link Material} enum,
+     * derived from the packet's data.
+     *
+     * @return The {@link Material} representing the type of block involved in this packet.
      */
     public Material getBlockType() {
         return handle.getBlocks().read(0);
     }
 
     /**
-     * Set Block Type.
+     * Sets the type of the block associated with this packet.
+     * This method updates the block type information in the packet data
+     * using the {@link Material} value provided.
      *
-     * @param value - new value.
+     * @param value the {@link Material} representing the new block type to be set.
+     *              Must not be null.
      */
     public void setBlockType(Material value) {
         handle.getBlocks().write(0, value);

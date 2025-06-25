@@ -26,104 +26,143 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
+/**
+ * WrapperPlayServerEntityVelocity is a packet wrapper for the server-side
+ * ENTITY_VELOCITY packet. It is used to manipulate and retrieve data
+ * related to the velocity of entities in the game world.
+ * The packet encapsulates the entity's ID and its velocities along the
+ * x, y, and z axes.
+ */
 public class WrapperPlayServerEntityVelocity extends AbstractPacket {
 
+    /**
+     * Represents the packet type {@code PacketType.Play.Server.ENTITY_VELOCITY}.
+     * This constant is used to identify and handle packets related to the server-side
+     * ENTITY_VELOCITY event, which manages the velocity information of entities in the game.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.ENTITY_VELOCITY;
 
+    /**
+     * Wrapper class for the Minecraft packet Play.Server.ENTITY_VELOCITY.
+     * This packet is sent by the server to update an entity's velocity.
+     *
+     * The class initializes the packet container with the required data and
+     * assigns default values to its modifiers. The packet type associated
+     * with this wrapper is {@code PacketType.Play.Server.ENTITY_VELOCITY}.
+     *
+     * Throws an IllegalArgumentException if the packet type does not match
+     * the expected type or if the packet container is null.
+     */
     public WrapperPlayServerEntityVelocity() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
     /**
-     * Retrieve Entity ID.
-     * <p>
-     * Notes: entity's ID
+     * Retrieves the ID of the entity associated with this packet.
      *
-     * @return The current Entity ID
+     * @return The ID of the entity as an integer.
      */
     public int getEntityID() {
         return handle.getIntegers().read(0);
     }
 
     /**
-     * Set Entity ID.
+     * Sets the ID of the entity associated with this packet.
      *
-     * @param value - new value.
+     * @param value the new entity ID to be set.
      */
     public void setEntityID(int value) {
         handle.getIntegers().write(0, value);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieves the entity associated with this packet in the specified world.
      *
-     * @param world - the current world of the entity.
-     * @return The spawned entity.
+     * @param world the world in which the entity exists
+     * @return The entity associated with this packet, or null if the entity could not be found
      */
     public Entity getEntity(World world) {
         return handle.getEntityModifier(world).read(0);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieves the entity associated with this packet in the world of the player
+     * involved in the specified packet event.
      *
-     * @param event - the packet event.
-     * @return The spawned entity.
+     * @param event the packet event containing the player and world information
+     * @return The entity associated with this packet, or null if the entity could not be found
      */
     public Entity getEntity(PacketEvent event) {
         return getEntity(event.getPlayer().getWorld());
     }
 
     /**
-     * Retrieve the velocity in the x axis.
+     * Retrieves the velocity of the entity along the X-axis.
      *
-     * @return The current velocity X
+     * The velocity is stored as an integer in the packet and is divided by 8000.0 to
+     * convert it into a value representing blocks per tick.
+     *
+     * @return The current X-axis velocity of the entity as a double.
      */
     public double getVelocityX() {
         return handle.getIntegers().read(1) / 8000.0D;
     }
 
     /**
-     * Set the velocity in the x axis.
+     * Sets the velocity of the entity along the X-axis.
      *
-     * @param value - new value.
+     * The velocity is stored as an integer in the packet after being multiplied by 8000.0.
+     *
+     * @param value The new velocity value for the X-axis, represented as a double,
+     *              where the value is in blocks per tick.
      */
     public void setVelocityX(double value) {
         handle.getIntegers().write(1, (int) (value * 8000.0D));
     }
 
     /**
-     * Retrieve the velocity in the y axis.
+     * Retrieves the velocity of the entity along the Y-axis.
      *
-     * @return The current velocity y
+     * The velocity is stored as an integer in the packet and is divided by 8000.0
+     * to convert it into a value representing blocks per tick.
+     *
+     * @return The current Y-axis velocity of the entity as a double.
      */
     public double getVelocityY() {
         return handle.getIntegers().read(2) / 8000.0D;
     }
 
     /**
-     * Set the velocity in the y axis.
+     * Sets the velocity of the entity along the Y-axis.
      *
-     * @param value - new value.
+     * The velocity is stored as an integer in the packet after being multiplied by 8000.0.
+     *
+     * @param value The new velocity value for the Y-axis, represented as a double,
+     *              where the value is in blocks per tick.
      */
     public void setVelocityY(double value) {
         handle.getIntegers().write(2, (int) (value * 8000.0D));
     }
 
     /**
-     * Retrieve the velocity in the z axis.
+     * Retrieves the velocity of the entity along the Z-axis.
      *
-     * @return The current velocity z
+     * The velocity is stored as an integer in the packet and is divided by 8000.0
+     * to convert it into a value representing blocks per tick.
+     *
+     * @return The current Z-axis velocity of the entity as a double.
      */
     public double getVelocityZ() {
         return handle.getIntegers().read(3) / 8000.0D;
     }
 
     /**
-     * Set the velocity in the z axis.
+     * Sets the velocity of the entity along the Z-axis.
      *
-     * @param value - new value.
+     * The velocity is stored as an integer in the packet after being multiplied by 8000.0.
+     *
+     * @param value The new velocity value for the Z-axis, represented as a double,
      */
     public void setVelocityZ(double value) {
         handle.getIntegers().write(3, (int) (value * 8000.0D));

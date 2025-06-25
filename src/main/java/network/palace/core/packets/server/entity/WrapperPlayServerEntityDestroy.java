@@ -22,41 +22,61 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import network.palace.core.packets.AbstractPacket;
 
+/**
+ * Wrapper class for the Minecraft packet Play.Server.ENTITY_DESTROY.
+ * This packet is sent by the server to indicate the destruction of one or more entities.
+ */
 public class WrapperPlayServerEntityDestroy extends AbstractPacket {
 
+    /**
+     * Represents the packet type {@code PacketType.Play.Server.ENTITY_DESTROY}.
+     * This type is used to identify packets sent by the server when one or more entities
+     * are destroyed. It is a constant identifier for the destruction packet in Minecraft's
+     * Play.Server protocol.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.ENTITY_DESTROY;
 
+    /**
+     * Constructs a new wrapper for the Play.Server.ENTITY_DESTROY packet type.
+     * This wrapper is used to handle and modify packets sent by the server
+     * when one or more entities are destroyed.
+     *
+     * Initializes the packet with its associated data and assigns default values
+     * to the packet's modifiers.
+     *
+     * The packet type associated with this wrapper is {@code PacketType.Play.Server.ENTITY_DESTROY}.
+     *
+     * Throws an IllegalArgumentException if the packet type does not match
+     * the expected type or if the packet container is null.
+     */
     public WrapperPlayServerEntityDestroy() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
     /**
-     * Retrieve Count.
-     * <p>
-     * Notes: length of following array
+     * Retrieves the number of entity IDs present in the packet.
      *
-     * @return The current Count
+     * @return The count of entity IDs.
      */
     public int getCount() {
         return handle.getIntegerArrays().read(0).length;
     }
 
     /**
-     * Retrieve Entity IDs.
-     * <p>
-     * Notes: the list of entities of destroy
+     * Retrieves the entity IDs contained in the packet.
      *
-     * @return The current Entity IDs
+     * @return An array of integers representing the IDs of the entities being referenced or destroyed.
      */
     public int[] getEntityIDs() {
         return handle.getIntegerArrays().read(0);
     }
 
     /**
-     * Set Entity IDs.
+     * Sets the entity IDs associated with this packet. These IDs represent
+     * the entities being referenced or destroyed in the Minecraft server packet.
      *
-     * @param value - new value.
+     * @param value An array of integers representing the entity IDs to set.
      */
     public void setEntityIds(int[] value) {
         handle.getIntegerArrays().write(0, value);

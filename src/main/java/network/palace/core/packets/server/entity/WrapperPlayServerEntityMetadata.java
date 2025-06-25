@@ -28,68 +28,97 @@ import org.bukkit.entity.Entity;
 
 import java.util.List;
 
+/**
+ * A wrapper class for the Play.Server.ENTITY_METADATA packet in Minecraft.
+ * This packet is typically used to update the metadata of an entity, such as
+ * its properties, state, or other associated data.
+ * The class provides methods to manipulate and retrieve the entity metadata,
+ * as well as the entity ID associated with the packet.
+ */
 public class WrapperPlayServerEntityMetadata extends AbstractPacket {
 
+    /**
+     * Represents the packet type {@code PacketType.Play.Server.ENTITY_METADATA}.
+     * This constant is used to identify packets that update the metadata of an entity,
+     * including its state, properties, or associated data.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.ENTITY_METADATA;
 
+    /**
+     * Constructs a new wrapper instance for the Play.Server.ENTITY_METADATA packet type.
+     * This wrapper is used to handle and modify packets sent by the server
+     * to update the metadata of an entity. Metadata includes properties, states,
+     * or other associated data of the entity.
+     *
+     * Initializes the packet with its associated data and assigns default values
+     * to the packet's modifiers.
+     *
+     * The packet type associated with this wrapper is {@code PacketType.Play.Server.ENTITY_METADATA}.
+     *
+     * Throws an IllegalArgumentException if the packet type does not match the
+     * expected type or if the packet container is null.
+     */
     public WrapperPlayServerEntityMetadata() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
     /**
-     * Retrieve Entity ID.
-     * <p>
-     * Notes: entity's ID
+     * Retrieves the ID of the entity associated with this packet.
      *
-     * @return The current Entity ID
+     * @return The ID of the entity as an integer.
      */
     public int getEntityID() {
         return handle.getIntegers().read(0);
     }
 
     /**
-     * Set Entity ID.
+     * Sets the ID of the entity associated with this packet.
      *
-     * @param value - new value.
+     * @param value the new entity ID to be set.
      */
     public void setEntityID(int value) {
         handle.getIntegers().write(0, value);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieves the entity associated with this packet in the specified world.
      *
-     * @param world - the current world of the entity.
-     * @return The spawned entity.
+     * @param world the world in which the entity exists. Must not be null.
+     * @return The entity associated with this packet, or null if the entity could not be found.
      */
     public Entity getEntity(World world) {
         return handle.getEntityModifier(world).read(0);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieves the entity associated with this packet in the world of the player
+     * involved in the specified packet event.
      *
-     * @param event - the packet event.
-     * @return The spawned entity.
+     * @param event the packet event containing the player and world information. Must not be null.
+     * @return The entity associated with this packet, or null if the entity could not be found.
      */
     public Entity getEntity(PacketEvent event) {
         return getEntity(event.getPlayer().getWorld());
     }
 
     /**
-     * Retrieve Metadata.
+     * Retrieves the metadata associated with an entity.
+     * Metadata contains various properties and states of the entity.
      *
-     * @return The current Metadata
+     * @return A list of {@code WrappedWatchableObject} representing the entity's metadata.
      */
     public List<WrappedWatchableObject> getMetadata() {
         return handle.getWatchableCollectionModifier().read(0);
     }
 
     /**
-     * Set Metadata.
+     * Sets the metadata associated with an entity.
+     * Metadata contains various properties and states of the entity.
      *
-     * @param value - new value.
+     * @param value a list of {@code WrappedWatchableObject} representing
+     *              the metadata to be associated with the entity.
+     *              Must not be null.
      */
     public void setMetadata(List<WrappedWatchableObject> value) {
         handle.getWatchableCollectionModifier().write(0, value);
