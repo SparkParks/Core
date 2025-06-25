@@ -302,7 +302,7 @@ public class WrapperPlayServerScoreboardTeam extends AbstractPacket {
     /// </pre>
     ///
     /// @return The current pack option data
-    
+
     /**
      * Retrieves the pack option data for the scoreboard team.
      *

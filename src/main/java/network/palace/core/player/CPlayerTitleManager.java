@@ -1,7 +1,14 @@
 package network.palace.core.player;
 
 /**
- * The interface C player title manager.
+ * The {@code CPlayerTitleManager} interface is responsible for managing and
+ * displaying player titles, subtitles, and associated timing configurations in a game.
+ * It provides methods to show titles with various configuration options including
+ * custom timings for fade-in, stay, and fade-out durations. Additionally, it provides
+ * functionality to reset currently displayed titles.
+ *
+ * <p>Implementations of this interface are expected to handle interactions with the player
+ * and ensure proper display behavior in different contexts.
  */
 public interface CPlayerTitleManager {
 

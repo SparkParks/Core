@@ -58,27 +58,57 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
-/**
- * This will manage all Modules and also the Core Managers.
- * <p>
- * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
- */
+/// This will manage all Modules and also the Core Managers.
+///
+/// You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
 
 /**
- * Represents the main Core system responsible for managing the lifecycle and configuration
- * of the application. This class provides initialization, enabling, disabling, and various
- * utility methods to manage the core functionality of the server.
+ * The {@code Core} class represents the central system of the application, managing
+ * core functionalities, plugin lifecycle, configurations, and various operational managers.
  * <p>
- * The Core class handles interactions with key managers, configurations, command registration,
- * event listeners, and integration with external services like databases and plugins.
- * It serves as the central point for coordinating the application's operations.
+ * This class encapsulates several key components and methods required for the plugin
+ * to interact with the Minecraft server, manage configurations, handle events, and
+ * provide utility functions. It acts as the backbone for the server plugin's
+ * functionality.
+ *
+ * <p>Key responsibilities of this class include:</p>
+ * <ul>
+ *   <li>Initializing core properties, configurations, and managers during the plugin lifecycle (e.g., {@code onLoad}, {@code onEnable}).</li>
+ *   <li>Registering commands, events, and listeners that enable the plugin's functionality.</li>
+ *   <li>Providing utility methods for key server interactions, including inventory creation, world management, and message handling.</li>
+ *   <li>Managing various components such as player data, permissions, economy, language formatting, and achievements.</li>
+ *   <li>Handling server states and interactions with external resources (e.g., SQL, MongoDB).</li>
+ * </ul>
+ *
+ * <p>Fields such as {@code coreClassLoader}, {@code configFile}, {@code serverType}, and {@code gameMode} store
+ * essential data and settings required by the plugin at runtime.</p>
+ *
+ * <p>The {@code Core} class also exposes static utility methods, making it easier
+ * to retrieve various managers, configurations, and instances required for the plugin's operation.</p>
  */
 @PluginInfo(name = "Core", version = "2.8.4", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
 public class Core extends JavaPlugin {
     /**
-     * The {@code coreClassLoader} is a private instance of {@link URLClassLoader}
-     * used to manage the loading of core classes and resources required by the application.
-     * It provides functionality to load classes and fetch resources specified by URLs defined as part of the class loader's configuration.
+     * <p>
+     * Represents the {@link URLClassLoader} instance used for loading core
+     * application classes and resources. This class loader is typically
+     * initialized to contain the core application JAR or directories in its
+     * classpath, allowing the application to dynamically load and manage core
+     * dependencies.
+     * </p>
+     *
+     * <p>
+     * This instance may be used to isolate core classes from other parts of the
+     * application or to enable custom loading mechanisms for prioritized
+     * resources.
+     * </p>
+     *
+     * <ul>
+     *   <li>Thread-safety: Access to the coreClassLoader should be carefully
+     *   considered, ensuring no unexpected modifications occur during runtime.</li>
+     *   <li>Lifecycle: Ensure proper cleanup and release of resources associated
+     *   with this class loader when the application shuts down.</li>
+     * </ul>
      */
     @Getter private URLClassLoader coreClassLoader;
 
@@ -225,13 +255,18 @@ public class Core extends JavaPlugin {
             ChatColor.LIGHT_PURPLE + "server";
 
     /**
-     * A static instance of the {@link MessageHandler} class that provides functionality
-     * for managing and handling messages, such as broadcasting messages to players
-     * or logging specific text output in the system.
-     * <p>
-     * This field is a central message handling utility used across the core system,
-     * ensuring consistent management of messages throughout the application.
-     * It is statically accessible for ease of use within the core context.
+     * <p>Represents a static instance of {@link MessageHandler} that is accessed via a getter method.</p>
+     *
+     * <p>This variable is intended to handle or process communication or messaging-related tasks,
+     * and it ensures a single instance (singleton pattern) of {@code MessageHandler} is maintained.</p>
+     *
+     * <ul>
+     *   <li>Static: This variable is shared across all instances of the enclosing class.</li>
+     *   <li>Getter method: Provides controlled access to this instance, ensuring encapsulation.</li>
+     * </ul>
+     *
+     * <p>Thread safety and initialization considerations for {@code messageHandler} should be
+     * reviewed to avoid unintended behaviors or errors in multi-threaded environments.</p>
      */
     @Getter private static MessageHandler messageHandler;
 
@@ -280,22 +315,32 @@ public class Core extends JavaPlugin {
     private AchievementManager achievementManager;
 
     /**
-     * Manages the behavior and lifecycle of SoftNPCs (non-player characters) within the system.
-     * <p>
-     * The SoftNPCManager is responsible for creating, updating, and managing the state of
-     * NPCs, including their attributes, interactions, and associated tasks.
-     * This variable operates within the Core framework and integrates with other
-     * managers or utilities as needed.
+     * <p>Represents an instance of the SoftNPCManager, which is responsible
+     * for managing non-player characters (NPCs) within the application.</p>
+     *
+     * <p>The SoftNPCManager handles operations such as:</p>
+     * <ul>
+     *   <li>Creating and initializing NPC entities.</li>
+     *   <li>Managing the lifecycle of NPCs, including updates and disposal.</li>
+     *   <li>Providing access to NPC-related data and functionality.</li>
+     * </ul>
+     *
+     * <p>This variable is utilized internally and should be accessed
+     * through its respective management methods within the application context.</p>
      */
     private SoftNPCManager softNPCManager;
 
     /**
-     * Manages player-specific data and operations within the application.
-     * This includes handling player-related functionalities such as tracking,
-     * permissions, statistics, and other player-associated features.
+     * Represents the instance of the {@code CPlayerManager} responsible for managing players in the application.
      * <p>
-     * It serves as the primary interface for accessing and manipulating player-related
-     * data and provides an organized structure for player management.
+     * This variable provides access to functionalities for handling player-specific actions,
+     * including but not limited to:
+     * <ul>
+     *   <li>Adding and removing players.</li>
+     *   <li>Tracking player states and details.</li>
+     *   <li>Managing player-related events.</li>
+     * </ul>
+     * </p>
      */
     private CPlayerManager playerManager;
 
@@ -359,28 +404,43 @@ public class Core extends JavaPlugin {
     }
 
     /**
-     * Handles the enabling of the plugin during the server startup or reload.
-     * This method is responsible for initializing core components, configurations,
-     * managing player data, and preparing the plugin for operation.
+     * Initializes and enables the plugin during the server startup or plugin reload phase.
      * <p>
-     * The following actions are performed in this method:
+     * This method performs critical initialization steps to set up the core functionality
+     * of the plugin, load configurations, initialize managers, and establish necessary
+     * services. It also ensures safety by temporarily restricting player access until the
+     * plugin is fully loaded and operational.
+     * </p>
+     *
      * <p>
-     * - Kicks all currently online players to ensure a clean reload.
-     * - Determines the current Minecraft server version.
-     * - Loads required external libraries and dependencies.
-     * - Initializes configuration files and retrieves key settings from the config,
-     *   including server type, instance name, debug mode, and various gameplay options.
-     * - Configures player tab header and footer, as well as login titles if enabled.
-     * - Sets up packet listeners for handling specific protocol events
-     *   (e.g., player settings, recipe interactions).
-     * - Registers outgoing and incoming plugin channels for specific integrations.
-     * - Initializes utilities such as SQL, MongoDB handlers, and managers for
-     *   permissions, player data, economy, achievements, and more.
-     * - Configures core commands and command mapping.
-     * - Sets up message handling for communication within the network.
-     * - Registers event listeners and plugin commands.
-     * - Ensures players are kept off the server until all setup tasks are completed.
-     * - Logs the enabling process and sends notifications to staff members via the network.
+     * The following key operations are undertaken by this method:
+     * </p>
+     * <ul>
+     *   <li>Initializes the plugin instance and sets up core dependencies.</li>
+     *   <li>Kicks all players during a reload to avoid conflicts or incomplete states.</li>
+     *   <li>Detects the Minecraft server version for compatibility purposes.</li>
+     *   <li>Loads external libraries required for plugin functionality.</li>
+     *   <li>Reads configuration values such as server type, instance name, and debug settings to establish runtime behavior.</li>
+     *   <li>Configures player-facing settings, including the tab header/footer and title messages on login.</li>
+     *   <li>Registers network communication channels, specifically for BungeeCord integration.</li>
+     *   <li>Initializes utility classes such as SQL and statistics utilities, while handling any exceptions robustly.</li>
+     *   <li>Sets up various managers for language, players, permissions, economy, NPCs, achievements, and crafting features.</li>
+     *   <li>Establishes communication frameworks, including RabbitMQ messaging, for inter-process communication.</li>
+     *   <li>Registers event listeners and plugin commands to handle gameplay interactions.</li>
+     *   <li>Runs a delayed task to set the server as online in the database and notify staff, ensuring proper plugin initialization before player login.</li>
+     * </ul>
+     *
+     * <p>
+     * This method also implements safeguards to prevent adverse effects from incomplete
+     * loading or plugin conflicts by delaying player access until all systems are ready.
+     * </p>
+     *
+     * <p><b>Notes:</b></p>
+     * <ul>
+     *   <li>Ensure all required configurations are properly populated in the plugin's YAML configuration files before enabling.</li>
+     *   <li>Custom exceptions and error handling are incorporated to prevent potentially disruptive stack traces in production environments.</li>
+     *   <li>On reload/restart, this method ensures a clean setup of all resources, avoiding residual states from previous sessions.</li>
+     * </ul>
      */
     @Override
     public final void onEnable() {
@@ -523,17 +583,15 @@ public class Core extends JavaPlugin {
     }
 
     /**
-     * Registers various listeners required for the application. This method sets up
-     * the necessary event handling by associating specific listeners to the system
-     * for proper functionality.
+     * Registers necessary listeners to the application.
+     *
      * <p>
-     * The listeners being registered include:
-     * - An item utility listener.
-     * - A prefix command listener.
-     * - A crafting menu listener.
-     * <p>
-     * This method ensures that all relevant components are wired correctly
-     * to respond to their respective events.
+     * This method adds the following listeners:
+     * <ul>
+     *   <li>{@code ItemUtil}: A utility listener for item-related operations.</li>
+     *   <li>{@code PrefixCommandListener}: A listener responsible for handling prefix-based commands.</li>
+     *   <li>{@code craftingMenu}: A listener for managing crafting menu interactions.</li>
+     * </ul>
      */
     private void registerListeners() {
         registerListener(new ItemUtil());
@@ -610,19 +668,17 @@ public class Core extends JavaPlugin {
     }
 
     /**
-     * Method executed when the server is disabled.
-     * <p>
-     * This method is responsible for performing necessary cleanup tasks
-     * and notifying relevant systems of the server shutdown. It updates the server's
-     * status in the database, sends a staff notification about the shutdown, and logs the shutdown event.
-     * <p>
-     * Actions performed:
-     * - Updates the server's online status in the database to reflect it being offline.
-     * - Notifies staff members about the server shutdown through a message handler.
-     * - Logs a shutdown message for administrative purposes.
-     * <p>
-     * Handles exceptions that might occur during the shutdown process to ensure the application
-     * can complete the disable sequence gracefully.
+     * This method is invoked to handle clean-up and shutdown tasks when the server is being disabled.
+     * It performs the following actions:
+     *
+     * <ul>
+     *   <li>Marks the server as offline in the MongoDB database using the {@code MongoHandler}.</li>
+     *   <li>Sends a notification to staff members informing them that the server is shutting down safely.</li>
+     *   <li>Logs any errors that occur during the shutdown process for debugging purposes.</li>
+     *   <li>Outputs a message to the server console indicating that the core has been disabled.</li>
+     * </ul>
+     *
+     * <p>If an exception is encountered during server shutdown-related operations, an error message is logged to the console.</p>
      */
     @Override
     public final void onDisable() {

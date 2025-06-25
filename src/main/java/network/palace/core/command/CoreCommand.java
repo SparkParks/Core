@@ -34,77 +34,51 @@ import java.util.stream.Collectors;
 /// @see org.bukkit.command.TabCompleter
 
 /**
- * Represents the core functionality and structure for commands, including the management of
- * sub-commands and command processing for different sender types. This is an abstract foundation
- * for creating custom commands in a plugin environment.
+ * Represents the core structure for a command system, allowing for a hierarchical setup of commands
+ * with main commands, subcommands, and associated handling logic. This class is designed to be extended
+ * to define custom commands, handling subcommand registration, execution, tab-completion, and error handling.
  * <p>
- * The CoreCommand class integrates with Bukkit's {@link CommandExecutor}
- * and {@link TabCompleter} interfaces, providing standardized methods
- * for handling command execution and tab completion.
+ * Key features include:
+ * <ul>
+ *     <li>Registration and unregistration of subcommands</li>
+ *     <li>Dynamic help command generation</li>
+ *     <li>Command execution for different command sender types (e.g., players, console, block entities)</li>
+ *     <li>Flexible subcommand retrieval based on full or partial identifiers</li>
+ *     <li>Error handling and logging for exceptions during command execution</li>
+ * </ul>
  * <p>
- * Fields:
+ * The {@code CoreCommand} class allows commands to be organized hierarchically, where parent commands
+ * can have their own subcommands. The structure ensures a robust command system while maintaining
+ * configuration flexibility via annotations or runtime logic.
  * <p>
- * - `subCommands`: A list of sub-commands registered under this command.
- * <p>
- * - `name`: The name of the main command.
- * <p>
- * - `superCommand`: The parent command, if applicable, for nested commands.
- * <p>
- * - `rank`: Required rank level to execute this command.
- * <p>
- * - `description`: A textual description of the command.
- * <p>
- * Constructors:
- * <p>
- * - Protected constructors allow for the creation of commands with or without sub-commands.
- * <p>
- * Key Methods:
- * <p>
- * - {@code registerSubCommand}: Allows registration of sub-commands dynamically after initialization.
- * <p>
- * - {@code unregisterSubCommand}: Removes specific sub-commands from this command.
- * <p>
- * - {@code getSubCommands}: Returns an immutable list of registered sub-commands.
- * <p>
- * - {@code regenerateHelpCommand}: Regenerates a help command based on available sub-commands.
- * <p>
- * - {@code onCommand}: Handles the execution of the main command or its sub-commands.
- * <p>
- * - {@code onTabComplete}: Handles the tab completion logic for the command.
- * <p>
- * - {@code handleCommandException}: Designed to be overridden to provide custom exception handling
- *   for errors during command execution.
- * <p>
- * - {@code getSubCommandFor}: Retrieves a specific sub-command by name.
- * <p>
- * - {@code getSubCommandsForPartial}: Retrieves sub-commands that partially match a provided string.
- * <p>
- * - Default and customizable handle methods: Provide functionality for dealing
- *   with commands dispatched by console, players, block command senders, or unknown types.
- * <p>
- * - {@code handleTabComplete}: Supports custom tab-completion behavior that subclasses can override.
- * <p>
- * - {@code isUsingSubCommandsOnly}: Hook for determining behavior related to sub-command-only usage.
- * <p>
- * - {@code getFormattedName}: Provides a formatted name for display or representation purposes.
- * <p>
- * - Overridden {@code toString}: Returns a string representation of the command.
+ * This class is primarily intended for integration with the Minecraft server API and provides
+ * functionality for managing command input and delegating logic specific to the command context.
  */
 public abstract class CoreCommand implements CommandExecutor, TabCompleter {
 
     /**
-     * A map containing the sub-commands associated with a particular command.
-     * Each entry maps the name of the sub-command to its corresponding {@link CoreCommand} instance.
+     * A map that holds the sub-commands available for a specific context or
+     * command environment.
+     *
      * <p>
-     * This map is used to manage and organize sub-commands tied to a root command,
-     * allowing for dynamic registration, unregistration, and command execution handling.
+     * The key in the map is a {@link String} representing the name of the sub-command.
+     * The value is a {@link CoreCommand} instance that encapsulates the logic and
+     * behavior of the corresponding sub-command.
+     * </p>
+     *
      * <p>
-     * Keys in the map represent the names or identifiers of the sub-commands,
-     * while the values represent the specific {@link CoreCommand} instances associated
-     * with each sub-command.
+     * This structure allows efficient retrieval of sub-command implementations
+     * based on their name, enabling dynamic and extensible command handling.
+     * </p>
+     *
      * <p>
-     * This field is initialized as an empty {@link HashMap}, and new sub-commands
-     * can be added by using methods like {@link #registerSubCommand(CoreCommand...)}.
+     * Example use cases:
+     * <ul>
+     *   <li>Registering a set of supported sub-commands for a main command.</li>
+     *   <li>Parsing user input to locate and execute the appropriate sub-command.</li>
+     *   <li>Providing extensibility by allowing new sub-commands to be added dynamically.</li>
+     * </ul>
+     * </p>
      */
     private final Map<String, CoreCommand> subCommands = new HashMap<>();
 
@@ -141,21 +115,26 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     @Getter @Setter private String description = "";
 
     /**
-     * Constructs a CoreCommand instance with a specified name.
+     * Constructs a new CoreCommand with the specified name.
+     * <p>
+     * This constructor initializes the core command with a unique identifier name.
      *
-     * @param name The name of the command.
+     * @param name The name of the command, used to uniquely identify this command.
      */
     protected CoreCommand(String name) {
         this.name = name;
     }
 
     /**
-     * Constructs a CoreCommand instance with a specified name and an optional
-     * list of subcommands.
+     * Constructs a new {@code CoreCommand} instance with the specified name and optional subcommands.
      *
-     * @param name        The name of the command.
-     * @param subCommands An optional list of subcommands to be registered
-     *                    under this command.
+     * <p>This constructor initializes the command with a given name and allows attaching
+     * one or more subcommands to the current command. Subcommands, if any, are registered
+     * during the initialization process.</p>
+     *
+     * @param name the name of the command; must not be {@code null}.
+     * @param subCommands optional varargs parameter representing one or more subcommands
+     *                    to be associated with this command; can be empty.
      */
     protected CoreCommand(final String name, CoreCommand... subCommands) {
         this.name = name;
@@ -223,18 +202,21 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Regenerates the help command for this instance of {@code CoreCommand}. If a subcommand named "help" is
-     * already registered, the method does nothing. Otherwise, it dynamically creates a new "help" subcommand
-     * that displays a formatted help menu outlining the main command and all its associated subcommands.
-     * <p>
-     * The generated "help" subcommand displays:
-     * - The name and description of the main command.
-     * - A list of subcommands with their respective descriptions.
-     * <p>
-     * The help menu is styled using {@code ChatColor} for enhanced readability and is sent to the sender when the
-     * "help" subcommand is executed. The "help" subcommand is automatically associated with its parent command.
-     * <p>
-     * The newly created help command is configured with the description "Open the help menu."
+     * Regenerates the "help" command for the current command if it is not already present.
+     *
+     * <p>This method checks whether a "help" subcommand is already registered in the subcommands map.
+     * If not, it creates a new "help" command, registers it as a subcommand, and configures its
+     * functionality. The purpose of the "help" command is to provide users with a list of available
+     * subcommands, their descriptions, and usage information.
+     *
+     * <p>The newly created "help" command:
+     * <ul>
+     *   <li>Displays the command's main name and a brief description if not exclusively using subcommands.</li>
+     *   <li>Lists all available subcommands along with their descriptions.</li>
+     *   <li>Sends the generated help message to the command sender.</li>
+     * </ul>
+     *
+     * <p>This method also sets the description of the "help" command to "Open the help menu".
      */
     public void regenerateHelpCommand() {
         if (subCommands.containsKey("help")) return;
@@ -415,14 +397,24 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     /// @param sender The sender of the command, cannot be directly cast to [CPlayer].
 
     /**
-     * Handles exceptions that occur during command execution. Provides a user-friendly
-     * message if the exception implements the {@code FriendlyException} interface or
-     * displays a default error message for other types of exceptions.
+     * Handles exceptions thrown during the execution of commands and notifies the command sender.
      * <p>
-     * This method also logs the stack trace for {@code UnhandledCommandExceptionException},
-     * aiding debugging of commands.
+     * This method processes exceptions in the following manner:
+     * <ul>
+     *     <li>If the exception is an instance of {@code FriendlyException}, it retrieves a user-friendly message
+     *     and sends it to the command sender.</li>
+     *     <li>If the exception is any other type, it sends the exception's class name and message to the sender,
+     *     formatted in red.</li>
+     *     <li>If the exception is an instance of {@code UnhandledCommandExceptionException}, it prints the
+     *     stack trace of the underlying cause to the console for debugging purposes.</li>
+     * </ul>
      *
-     * @param ex     The exception that occurred during
+     * @param ex The {@link CommandException} that was thrown during the execution of a command.
+     *           This is the exception to be handled.
+     * @param args The array of arguments that were passed to the command which caused the exception.
+     *             Can provide context for the exception handling.
+     * @param sender The {@link CommandSender} who executed the command.
+     *               This is the recipient of any messages generated by the exception handling.
      */
     protected void handleCommandException(CommandException ex, String[] args, CommandSender sender) {
         //Get the friendly message if supported
@@ -437,27 +429,32 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Prepares the environment or performs any necessary checks before dispatching
-     * the execution of a subcommand.
+     * Prepares the dispatcher for handling a sub-command associated with this command.
+     * <p>
+     * This method is invoked before dispatching a specific sub-command,
+     * allowing for any necessary pre-processing or setup.
+     * </p>
      *
-     * @param sender The source of the command, such as a player, console, or block command sender.
-     * @param args The arguments passed alongside the main command, used for subcommand logic.
-     * @param subCommand The subcommand to be dispatched for execution.
+     * @param sender The {@link CommandSender} initiating the command. This could represent a player, console, or other source.
+     * @param args An array of {@code String} arguments passed to the command, typically capturing any parameters or sub-command names.
+     * @param subCommand The {@link CoreCommand} representing the sub-command to be dispatched. Contains the logic associated with the specific sub-command.
      */
     protected void preSubCommandDispatch(CommandSender sender, String[] args, CoreCommand subCommand) {
     }
 
     /**
-     * Retrieves a subcommand associated with the provided string identifier.
-     * The method first attempts to find an exact match (case-sensitive) for the given string.
-     * If no exact match is found, it performs a case-insensitive comparison with the identifiers
-     * of registered subcommands.
+     * Retrieves the sub-command associated with the given string.
+     * <p>
+     * This method first checks for an exact match (case-sensitive) within the sub-commands.
+     * If no exact match is found, it performs a case-insensitive lookup to find a matching sub-command.
+     * If no matching sub-command is found, this method returns {@code null}.
      *
-     * @param s the string identifier of the subcommand to be retrieved. This may be
-     *          either an exact match or a case-insensitive match for a registered subcommand.
+     * @param s the name of the sub-command to retrieve. This can be in any letter case.
+     *          If the string matches exactly or in a case-insensitive manner with a sub-command,
+     *          the corresponding {@link CoreCommand} will be returned.
      *
-     * @return the corresponding {@code CoreCommand} instance if a matching subcommand is found;
-     *         otherwise, returns {@code null}.
+     * @return the {@link CoreCommand} corresponding to the given string if found, or {@code null}
+     *         if no matching sub-command exists.
      */
     public final CoreCommand getSubCommandFor(String s) {
         // If we have an exact match, case and all, don't waste the CPU cycles on the lower for loop.
@@ -471,15 +468,20 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Retrieves a list of subcommands that match, either exactly or partially, a given string identifier.
-     * The method first checks for an exact match. If no exact match is found, it searches for subcommands
-     * whose names start with the provided string (case-insensitive).
+     * Retrieves a list of sub-commands that match a given partial input string.
+     * <p>
+     * This method attempts to find either an exact match for the provided partial input
+     * string or any sub-commands whose names start with the partial input string,
+     * ignoring case sensitivity.
      *
-     * @param s the string identifier used to search for matching subcommands. It may represent an exact match
-     *          or the beginning of a subcommand's name.
-     * @return a list of {@code CoreCommand} instances that match the given string. The list contains either
-     *         a single exact match or all subcommands whose names start with the string (case-insensitive).
-     *         If no matches are found, an empty list is returned.
+     * @param s The partial input string used to match sub-command names.
+     *          Cannot be {@code null}.
+     *
+     * @return A {@code List} of {@code CoreCommand} objects that match the provided
+     *         partial input string. If an exact match is found, only the exact match
+     *         is returned. Otherwise, all sub-commands with names starting with the
+     *         input string are returned. If no matches are found, the returned list
+     *         will be empty.
      */
     public final List<CoreCommand> getSubCommandsForPartial(String s) {
         List<CoreCommand> commands = new ArrayList<>(); // Create a place to hold our possible commands
@@ -495,61 +497,105 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Handles the execution of a command for a specific player. This method
-     * processes the input arguments and performs the necessary actions based
-     * on the command's logic. If the command is not implemented or supported,
-     * an {@code EmptyHandlerException} is thrown.
+     * Handles the execution of a specific command for a player.
+     * <p>
+     * This method is invoked when a command matching this handler is executed by a {@link CPlayer}.
+     * The method processes the command arguments and performs the necessary functionality or validation.
+     * Subclasses may override this method to implement specific command handling logic.
+     * <p>
+     * By default, this method throws an {@link EmptyHandlerException}, indicating that no specific handling
+     * logic is implemented for this command.
      *
-     * @param player The player executing the command.
-     * @param args   The arguments provided with the command.
-     * @throws CommandException If an error occurs during the execution of the command.
+     * @param player The {@link CPlayer} executing the command. This represents the player initiating the command.
+     * @param args   An array of {@link String} representing the arguments provided with the command.
+     *               Arguments may include additional parameters or sub-command identifiers.
+     *
+     * @throws CommandException If any error occurs during command execution, such as validation failure or
+     *                          insufficient permissions. Subclasses should handle this exception as needed.
      */
     protected void handleCommand(CPlayer player, String[] args) throws CommandException {
         throw new EmptyHandlerException();
     }
 
     /**
-     * Handles the execution of a command sent by a console command sender. This method
-     * processes the input arguments and allows for specific handling logic to be
-     * implemented by subclasses. By default, it throws an {@code EmptyHandlerException}
-     * to indicate no specific handling is provided for console commands.
+     * Handles the execution of a command sent from the console.
+     * <p>
+     * This method is responsible for processing a command that originates
+     * from a {@link ConsoleCommandSender}, including arguments parsing and
+     * sub-command delegation if applicable. By default, this implementation
+     * throws an {@link EmptyHandlerException} indicating that no specific
+     * handling is implemented.
+     * </p>
      *
-     * @param commandSender The sender of the command, which is a console entity.
-     * @param args The arguments provided by the console for the command execution.
-     * @throws CommandException If an error occurs during the execution of the command.
+     * @param commandSender the {@link ConsoleCommandSender} who executed the command.
+     *                      This represents the console from which the command originates.
+     * @param args          an array of {@code String} representing the arguments
+     *                      passed with the command. The first element typically
+     *                      represents the sub-command, if any.
+     * @throws CommandException if there is an issue processing the command, or
+     *                          if the handling for the command is not implemented.
      */
     protected void handleCommand(ConsoleCommandSender commandSender, String[] args) throws CommandException {
         throw new EmptyHandlerException();
     }
 
     /**
-     * Handles a command sent by a BlockCommandSender with the provided arguments.
+     * Handles a command execution specifically for {@link BlockCommandSender}.
+     * <p>
+     * This method processes the command input provided by a {@code BlockCommandSender} and
+     * performs any logic or operations defined in its implementation.
+     * If no operations are implemented, an {@code EmptyHandlerException} is thrown.
+     * </p>
      *
-     * @param commandSender the sender that issued the command
-     * @param args the arguments provided with the command
-     * @throws CommandException if there is an error during command execution
+     * @param commandSender The {@link BlockCommandSender} instance that invoked the command.
+     *                      Represents a block entity capable of issuing commands (e.g., command block).
+     * @param args          An array of {@link String} arguments accompanying the command.
+     *                      These could represent parameters or subcommand flags.
+     *
+     * @throws CommandException If the execution fails or encounters an invalid condition.
      */
     protected void handleCommand(BlockCommandSender commandSender, String[] args) throws CommandException {
         throw new EmptyHandlerException();
     }
 
     /**
-     * Handles an unspecified command by throwing an exception.
+     * Handles a command in a general, unspecific context when no type-specific handling
+     * is available for the provided {@link CommandSender}.
      *
-     * @param sender The source of the command, typically the user or entity that issued the command.
-     * @param args The arguments provided with the command.
-     * @throws CommandException If an error occurs while processing the command.
+     * <p>This method is intended to be used as a fallback for handling commands that do not
+     * have specialized implementations based on the specific type of {@code CommandSender}.
+     * For instance, it is invoked if there is no explicit method to handle commands issued by
+     * players, console senders, or block command senders.</p>
+     *
+     * <p>By default, this implementation throws an {@link EmptyHandlerException}, signaling that
+     * the command has no defined handling for this context.</p>
+     *
+     * @param sender The {@link CommandSender} executing the command. This may include players,
+     *               console senders, or block command senders, among others.
+     * @param args   The arguments passed to the command, represented as an array of {@link String}.
+     *               These arguments provide additional context or data for the command processing.
+     * @throws CommandException If an issue occurs during the handling of the command, general or
+     *                          specific exceptions related to the command logic may be thrown.
      */
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         throw new EmptyHandlerException();
     }
 
     /**
-     * Handles the execution of a subcommand related to a post operation.
+     * Handles any necessary logic after the execution of a subcommand.
      *
-     * @param sender the source initiating the command, typically a player or console
-     * @param args the array of arguments provided with the command
-     * @throws CommandException if an error occurs while handling the subcommand
+     * <p>This method may be used for tasks such as cleanup, logging, or other operations
+     * that should occur immediately after a subcommand is executed. If no specific behavior
+     * is defined, it will throw an {@link EmptyHandlerException} to signify that the
+     * post-subcommand handler has not been implemented.</p>
+     *
+     * @param sender The {@link CommandSender} who executed the command. This represents
+     *               the entity (e.g., player, console) responsible for issuing the command.
+     * @param args   An array of {@link String} arguments that were passed to the executed
+     *               subcommand. This array may contain additional parameters or context
+     *               used to influence the behavior of the method.
+     * @throws CommandException If the post-subcommand handling encounters an error or
+     *                          if the handler has not been implemented.
      */
     protected void handlePostSubCommand(CommandSender sender, String[] args) throws CommandException {
         throw new EmptyHandlerException();
